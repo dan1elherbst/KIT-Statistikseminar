@@ -3,9 +3,23 @@
 \usepackage[utf8]{inputenc} % this is needed for umlauts
 \usepackage[ngerman]{babel} % this is needed for umlauts
 \usepackage[T1]{fontenc}    % this is needed for correct output of umlauts in pdf
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{bm}
+
+\newcommand{\Pb}{\mathbb{P}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\X}{\mathbf{X}}
+\newcommand{\Y}{\mathbf{Y}}
+\newcommand{\T}{\mathbf{\Theta}}
+\newcommand{\muu}{\bm{\mu}}
+\newcommand{\Ssigma}{\mathbf{\Sigma}}
+
 
 %opening
-\title{Reduced-Rank Regression}
+\title{Reduced-Rank-Regression}
 \author{Daniel Herbst}
 \date{10. Mai 2021}
 
@@ -14,11 +28,48 @@
 \maketitle
 
 \begin{abstract}
-
+Nachdem in der vorigen Präsentation das multivariate Regressionsmodell mit festen Inputvariablen vorgestellt wurde und 
+bereits Modelle betrachtet wurden, bei denen die Regressionskoeffizienten gewisse (lineare) Nebenbedingungen
+erfüllen, wollen wir nun eine ähnliche Situation betrachten, bei der wir die Inputvariablen allerdings als
+zufällig annehmen und den Rang der Regressionskoeffizientenmatrix einschränken. Hierbei handelt es sich dann um das
+Reduced-Rank-Regressionsmodell, das unter anderem auch einige Techniken der multivariaten Statistik, etwa zur Dimensionsreduktion, 
+verallgemeinert. Im Wesentlichen folgt der Vortrag 
+\cite[Kapitel 6.3]{Izenman}.
 \end{abstract}
 
 \section{Einleitung}
+Wir betrachten die folgende Situation:
+$$\X := (X_1, \dots, X_r)^\top \quad \text{und} \quad \Y := (Y_1, \dots, Y_s)^\top \text{,}$$
+seien Zufallsvektoren mit gemeinsamer Verteilung $\Pb^{(\X, \Y)}$, wobei $r, s \in \N$ mit $s \leq r$,
+und ferner definieren wir folgende Schreibweisen für die entsprechenden Erwartungwerte und Kovarianzmatrizen:
+$$ \muu_\X := \E\X, \quad \muu_\Y := \E\Y \quad \text{und} \quad \begin{pmatrix}
+	\Ssigma_{\X\X} & \Ssigma_{\X\Y} \\
+	\Ssigma_{\Y\X} & \Ssigma_{\Y\Y}
+\end{pmatrix} := \Sigma \biggl(\begin{pmatrix}
+\X \\
+\Y
+\end{pmatrix}\biggr).$$
+Außer $\Pb^\X \ll \lambda^r$ und $\Pb^\Y \ll \lambda^s$, d.h. der Stetigkeit der Zufallsvektoren $\X$ und $\Y$, möchten wir zunächst keine
+weiteren Annahmen über die Verteilung von $\X$ und $\Y$ treffen.
 
-Hier steht dann der Text.
+\section{Klassisches multivariates Regressionsmodell mit zufälliger Inputvariable}
+Das klassische multivariate Regressionsmodell mit zufälliger Inputvariable ist von folgender Form: Für $\X$ und $\Y$ gelte
+$$ \Y = \muu + \T \X + \mathcal{E} \text{,} $$
+wobei $\muu \in \R^s$ und $\T \in \R^{s \times r}$ unbekannte Parameter seien sowie $\mathcal{E}$ ein (nicht beobachtbarer) $s$-dimensionaler zufälliger Fehler ist mit Erwartungswert $\E \mathcal{E} = 0$ und Kovarianzmatrix $\Ssigma_{\mathcal{E} \mathcal{E}}$. Zudem werden $\X$ und
+$\mathcal{E}$ als unabhängig vorausgesetzt.
+
+
+
+
+\newpage
+
+\begin{thebibliography}{9}
+	\bibitem[Izenman]{Izenman} 
+	Izenman, Alan Julian.
+	\textit{Modern Multivariate Statistical Techniques: Regression, Classification, and Manifold Learning}. 
+	Springer Texts in Statistics, Springer-Verlag New York, 2008.
+\end{thebibliography}
+
+
 
 \end{document}
