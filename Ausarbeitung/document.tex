@@ -7,6 +7,8 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{bm}
+\usepackage{amsthm}
+\usepackage{hyperref}
 
 \newcommand{\Pb}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
@@ -18,7 +20,19 @@
 \newcommand{\muu}{\bm{\mu}}
 \newcommand{\Ssigma}{\mathbf{\Sigma}}
 \newcommand{\vv}{\mathbf{v}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\C}{\mathbf{C}}
+\newcommand{\rk}{\mathrm{rk}}
+\newcommand{\A}{\mathbf{A}}
+\newcommand{\B}{\mathbf{B}}
+\newcommand{\Ggamma}{\mathbf{\Gamma}}
+\newcommand{\tr}{\mathrm{tr}}
 
+\newtheorem{definition}{Definition}[section]
+\newtheorem{theorem}[definition]{Satz}
+\newtheorem{lemma}[definition]{Lemma}
+\newtheorem*{remark}{Bemerkung}
+\DeclareMathOperator*{\argmin}{argmin}
 
 %opening
 \title{Reduced-Rank-Regression}
@@ -36,11 +50,12 @@ erfüllen, wollen wir nun eine ähnliche Situation betrachten, bei der wir die I
 zufällig annehmen und den Rang der Regressionskoeffizientenmatrix einschränken. Hierbei handelt es sich dann um das
 Reduced-Rank-Regressionsmodell, das unter anderem auch einige Techniken der multivariaten Statistik, etwa zur Dimensionsreduktion, 
 verallgemeinert. Im Wesentlichen folgt der Vortrag 
-\cite[Kapitel 6.3]{Izenman}.
+\cite[Kapitel 6.3]{Iz08}.
 \end{abstract}
 
 \section{Einleitung}
-Wir betrachten die folgende Situation:
+\label{Einleitung}
+Unsere Ausgangssituation ist die Folgende:
 $$\X := (X_1, \dots, X_r)^\top \quad \text{und} \quad \Y := (Y_1, \dots, Y_s)^\top \text{,}$$
 seien Zufallsvektoren mit gemeinsamer Verteilung $\Pb^{(\X, \Y)}$, wobei $r, s \in \N$ mit $s \leq r$,
 und ferner definieren wir folgende Schreibweisen für die entsprechenden Erwartungwerte und Kovarianzmatrizen:
@@ -55,8 +70,9 @@ Abgesehen von $\Pb^\X \ll \lambda^r$ und $\Pb^\Y \ll \lambda^s$, d.h. der Stetig
 weiteren Annahmen über die Verteilungen von $\X$ und $\Y$ treffen.
 
 \section{Klassisches multivariates Regressionsmodell mit zufälliger Inputvariable}
+
 Das klassische multivariate Regressionsmodell mit zufälliger Inputvariable ist von folgender Form: Für $\X$ und $\Y$ gelte
-$$ \Y = \muu + \T \X + \mathcal{E} \text{,} $$
+\[ \Y = \muu + \T \X + \mathcal{E} \text{,} \label{eq:2.1} \tag{2.1}\]
 wobei $\muu \in \R^s$ und $\T \in \R^{s \times r}$ unbekannte Parameter seien sowie $\mathcal{E}$ ein (nicht beobachtbarer) $s$-dimensionaler zufälliger Fehler ist mit Erwartungswert $\E \mathcal{E} = 0$ und Kovarianzmatrix $\Ssigma_{\mathcal{E} \mathcal{E}}$. Zudem werden $\X$ und
 $\mathcal{E}$ als unabhängig vorausgesetzt.
 \\
@@ -65,59 +81,173 @@ Ausgehend von der Situation aus der Einleitung wollen wir nun optimale $\muu$ un
 $$W(\muu, \T) := \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \in \R^{s \times s}$$ in der Spektralnorm
 $$ \| \mathbf{A} \|_2 := \max_{\| \vv \|_2 = 1} \| \mathbf{A} \vv \|_2 \text{,} \quad \mathbf{A} \in \R^{s \times s} $$ 
 minimiert wird.
+
 Für symmetrische, positiv semidefinite Matrizen $\mathbf{A}$ lässt sich (etwa mit dem Spektralsatz) zeigen, dass
 $$ \| \mathbf{A} \|_2 = \max_{\| \vv \|_2 = 1} \vv^\top \mathbf{A} \vv = \lambda_{\max} (\mathbf{A}) \text{,} $$
 wobei $\lambda_{\max} (\mathbf{A})$ der größte Eigenvektor von $\mathbf{A}$ sei. Da $W(\muu, \T)$ für alle möglichen $\muu$, $\T$ symmetrisch
 positiv semidefinit ist, werden wir diese Darstellung der Spektralnorm auch zur Minimierung von $\| W(\muu, \T) \|_2$  benutzen.
-\\
 
-Unter der zusätzlichen Annahme, dass $\Ssigma_{\X\X}$ nichtsingulär ist, und mit $\X_c := \X - \muu_\X$, $\Y_c := \Y - \muu_\Y$ gilt für alle $\T \in \R^{s \times r}$, $\muu \in \R^s$:
-\begin{align*}
-	W(\muu, \T) ={}& \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \\
-	            ={}& \E[(\Y_c - \T \X_c + (\muu_\Y - \T \muu_\X - \muu))(\Y_c - \T \X_c + (\muu_\Y - \T \muu_\X - \muu))^\top] \\
-	            ={}& \E[\Y_c \Y_c^\top - \Y_c \X_c^\top \T^\top + \Y_c (\muu_\Y - \T \muu_\X - \muu)^\top \\
-	               & \quad - \T \X_c \Y_c^\top + \T \X_c \X_c^\top \T^\top - \T \X_c (\muu_\Y - \T \muu_\X - \muu)^\top \\
-	               & \quad + (\muu_\Y - \T \muu_\X - \muu) \Y_c^\top - (\muu_\Y - \T \muu_\X - \muu) \X_c^\top \T^\top \\
-	               & \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top] \\
-	            ={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \T^\top - \T \Ssigma_{\X\Y} + \T \Ssigma_{\X\X} \T^\top \\
-	               & \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \\
-	            ={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \\
-	               & \quad + (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})(\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})^\top \\
-	               & \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \text{,}
-\end{align*}
-und mit $$A(\T) := \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2} \quad \text{,} \quad B(\muu, \T) := \muu_\Y - \T \muu_\X - \muu$$ gilt für $\vv \in \R^s$, $\| \vv \|_2 = 1$:
-\begin{align*}
-	\vv^\top W(\muu, \T) \vv ={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
-	                                            + \vv^\top A(\T)^\top A(\T) \vv + \vv^\top B(\muu, \T)^\top B(\muu, \T) \vv \\
-	                         ={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
-	                         + \| A(\T) \vv \|_2 + \| B(\muu, \T) \vv \|_2 \\
-	                         \geq{}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
-\end{align*}
-und daher ist
-$$ \| W(\muu, \T) \|_2 \geq \| \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \|_2 \text{,}$$
-mit Gleichheit falls $A(\T) = B(\muu, \T) = 0$, was der Fall ist, wenn
-$$ \muu = \muu_\Y - \T \muu_\X \quad \text{und} \quad \T = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \text{.}$$
-Dann ist
-\begin{align*}
-	\mathcal{E} ={}& \Y - \muu - \T \X \\
-	            ={}& \Y - (\muu_\Y - (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) \muu_\X) - (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) \X \\
-	            ={}& \Y_c - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \X_c
-\end{align*}
-und es gilt offensichtlich $\E \mathcal{E} = 0$ sowie
-$$\E[\mathcal{E} \X_c^\top] = \E[(\Y_c - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \X_c) \X_c^\top] = \Ssigma_{\Y\X} - \Ssigma_{\Y\X}\Ssigma_{\X\X}^{-1} \Ssigma_{\X\X} = 0 \text{,}$$
-d.h. $\X$ und $\mathcal{E}$ sind unkorreliert.
+\begin{theorem}
+	\label{thm:mr}
+	Seien $\X$ und $\Y$ wie in der \nameref{Einleitung} und zudem $\Ssigma_{\X\X}$ nichtsingulär, so ist
+	$$ \argmin_{(\muu, \T)} \| W(\muu, \T) \|_2 = (\muu_\Y - \T \muu_\X, \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) =: (\muu_{\min}, \T_{\min}) $$
+	mit 
+	$$W(\muu_{\min}, \T_{\min}) = \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \text{.}$$
+	Ferner gilt für $\mathcal{E} := \Y - \muu_{\min} - \T_{\min} \X$, dass 
+	$$\E \mathcal{E} = 0 \quad \text{und} \quad \E[\mathcal{E}(\X - \muu_\X)^\top] = 0 \text{,}$$
+	d.h. $\X$ und $\mathcal{E}$ sind unkorreliert.
+\end{theorem} 
+
+\begin{proof}
+	Mit $\X_c := \X - \muu_\X$, $\Y_c := \Y - \muu_\Y$ gilt für alle $\T \in \R^{s \times r}$, $\muu \in \R^s$:
+	\begin{align*}
+		W(\muu, \T) ={}& \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \\
+		={}& \E[(\Y_c - \T \X_c + (\muu_\Y - \T \muu_\X - \muu))(\Y_c - \T \X_c + (\muu_\Y - \T \muu_\X - \muu))^\top] \\
+		={}& \E[\Y_c \Y_c^\top - \Y_c \X_c^\top \T^\top + \Y_c (\muu_\Y - \T \muu_\X - \muu)^\top \\
+		& \quad - \T \X_c \Y_c^\top + \T \X_c \X_c^\top \T^\top - \T \X_c (\muu_\Y - \T \muu_\X - \muu)^\top \\
+		& \quad + (\muu_\Y - \T \muu_\X - \muu) \Y_c^\top - (\muu_\Y - \T \muu_\X - \muu) \X_c^\top \T^\top \\
+		& \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top] \\
+		={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \T^\top - \T \Ssigma_{\X\Y} + \T \Ssigma_{\X\X} \T^\top \\
+		& \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \\
+		={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \\
+		& \quad + (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})(\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})^\top \\
+		& \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \text{,}
+	\end{align*}
+	und mit $$A(\T) := \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2} \quad \text{,} \quad B(\muu, \T) := \muu_\Y - \T \muu_\X - \muu$$ gilt für $\vv \in \R^s$, $\| \vv \|_2 = 1$:
+	\begin{align*}
+		\vv^\top W(\muu, \T) \vv ={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
+		+ \vv^\top A(\T)^\top A(\T) \vv + \vv^\top B(\muu, \T)^\top B(\muu, \T) \vv \\
+		={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
+		+ \| A(\T) \vv \|_2 + \| B(\muu, \T) \vv \|_2 \\
+		\geq{}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
+	\end{align*}
+	und daher ist
+	$$ \| W(\muu, \T) \|_2 \geq \| \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \|_2 \text{,}$$
+	mit Gleichheit falls $A(\T) = B(\muu, \T) = 0$, was der Fall ist, wenn
+	$$ \muu = \muu_\Y - \T \muu_\X =: \muu_{\min} \quad \text{und} \quad \T = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} =: \T_{\min} \text{.}$$
+	Man erhält nun
+	\begin{align*}
+		\mathcal{E} ={}& \Y - \muu_{\min} - \T_{\min} \X \\
+		={}& \Y - (\muu_\Y - (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) \muu_\X) - (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) \X \\
+		={}& \Y_c - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \X_c
+	\end{align*}
+	und es gilt offensichtlich $\E \mathcal{E} = 0$ sowie
+	$$\E[\mathcal{E} \X_c^\top] = \E[(\Y_c - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \X_c) \X_c^\top] = \Ssigma_{\Y\X} - \Ssigma_{\Y\X}\Ssigma_{\X\X}^{-1} \Ssigma_{\X\X} = 0 \text{,}$$
+	d.h. $\X$ und $\mathcal{E}$ sind unkorreliert.
+\end{proof}
 
 \section{Reduced-Rank-Regressionsmodell}
 
+Wir betrachten nun das folgende Regressionsmodell
+\[\Y = \muu + \C \X + \mathcal{E} \text{,} \label{eq:3.1} \tag{3.1}\]
+bei dem $\muu \in \R^s$ und $\C \in \R^{s \times r}$ unbekannte Parameter sind sowie $\mathcal{E}$ ein nicht beobachtbarer, zufälliger Fehler mit $\E \mathcal{E} = 0$ und Kovarianzmatrix $\Ssigma_{\mathcal{E} \mathcal{E}}$, wobei $\X$ und $\mathcal{E}$ unabhängig seien. 
 
+Im Gegensatz zu \eqref{eq:2.1}, wo wir über $\T$ keine weiteren Annahmen treffen wollten, soll es nun zusätzlich ein gewisses $t$ geben mit
+$$ \rk \, \C \leq t \leq s \text{.}$$
+In diesem Fall gibt es Matrizen $\A \in \R^{s \times t}$ und $\B \in \R^{t \times r}$ mit $\C = \A \B$, d.h. das Modell \eqref{eq:3.1}
+lässt sich nun schreiben als
+\[\Y = \muu + \A \B \X + \mathcal{E} \text{,} \label{eq:3.2} \tag{3.2}\]
+wobei $\muu$, $\A$ und $\B$ nun die unbekannten Parameter sind.
+
+Auch hier möchten wir für $\X$ und $\Y$ wie in Satz~\ref{thm:mr} $\muu \in \R^s$, $\A \in \R^{s \times t}$ und $\B \in \R^{t \times r}$ finden, die $\Y - \muu - \A \B \X$ auf eine gewisse Art und Weise minimieren, gehen hier aber etwas anders vor:
+Für eine symmetrische, positiv definite Gewichtsmatrix $\Ggamma \in \R^{s \times s}$ wollen wir nun 
+$$ W(t) := \E[(\Y - \muu - \A \B \X)^{\top} \Ggamma (\Y - \muu - \A \B \X)]$$
+über $\muu$, $\A$ und $\B$ minimieren.
+
+\begin{theorem}
+	\label{thm:rrr}
+	Hier steht dann einmal der passende Satz.
+\end{theorem}
+
+Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebra:
+\begin{definition}[Singulärwertzerlegung]
+	Sei $\A \in \R^{m \times n}$ mit $r := \rk \, \A \leq \min\{m, n\}$. 
+	Dann existiert eine Faktorisierung 
+	$$\A = \mathbf{U} \mathbf{S} \mathbf{V}^\top = \sum_{i=1}^{r} \sigma_i \mathbf{u}_i \mathbf{v}_i^\top$$
+	mit $\mathbf{U} = (\mathbf{u}_1, \dots \mathbf{u}_m) \in O(m), \mathbf{V} = (\mathbf{v}_1, \dots \mathbf{v}_n) \in O(n)$ und einer Diagonalmatrix $\mathbf{S} \in \R^{m \times n}$ mit 
+	$$\mathbf{S} = \begin{pmatrix}
+		\Ssigma & 0 \\
+		0       & 0
+	\end{pmatrix} \text{,} \quad \Ssigma = \mathrm{diag}(\sigma_1,\dots,\sigma_r) \in \R^{r \times r} \text{,} \quad \sigma_1 \geq \dots \geq  \sigma_r > 0 \text{.}$$
+	Hierbei sind außerdem:
+	\begin{itemize}
+		\itemsep -0.2em
+		\item $\mathbf{v}_1,\dots,\mathbf{v}_n$ Eigenvektoren von $\A^\top \A$ zu den Eigenwerten $\sigma_1^2 \geq \dots \geq \sigma_r^2 > 0 = \dots = 0$
+		\item $\mathbf{u}_1,\dots,\mathbf{u}_m$ Eigenvektoren von $\A \A^\top$ zu den Eigenwerten $\sigma_1^2 \geq \dots \geq \sigma_r^2 > 0 = \dots = 0$.
+	\end{itemize}
+	
+\end{definition}
+
+\begin{lemma}[Satz von Eckart-Young]
+	\label{thm:eckart-young}
+	Seien $\A, \B \in \R^{m \times n}$ und $b := \rk \, \B \leq \rk \, \A =: r$, und sei
+	$\lambda_j(\C)$ für eine reelle symmetrischen Matrix $\C$ deren $j$-größter Eigenwert.
+	Dann gilt:
+	$$\lambda_j((\A - \B)(\A - \B)^\top) \geq \lambda_{j+b}(\A \A^\top)$$
+	mit Gleichheit für
+	$$\A_b := \sum_{i=1}^{b} \lambda_i^{1/2} \mathbf{u}_i \mathbf{v}_i^\top \text{,}$$
+	wobei $\lambda_i := \lambda_i(\A \A^\top)$ und $\mathbf{u}_i$ bzw. $\mathbf{v}_i$ seien jeweils orthonormale Eigenvektoren von $\A \A^\top$ bzw. 
+	$\A^\top \A$.
+\end{lemma}
+
+\begin{remark}
+	Insbesondere zeigt Lemma~\ref{thm:eckart-young}, dass das dort definierte $\A_b$ den Abstand von $\A$ unter allen Rang-$b$-Matrizen in $\R^{m \times n}$ in der Spektralnorm minimiert.
+\end{remark}
+
+\begin{proof}
+	Folgt etwa direkt aus \cite[Satz 4.6]{BZ21}.
+\end{proof}
+
+\begin{proof}[Beweis von Satz~\ref{thm:rrr}]
+	Seien $\muu \in \R^s$, $\A \in \R^{s \times t}$, $\B \in \R^{t \times r}$ und setze $\X_c := \X - \muu_\X$, $\Y_c = \Y - \muu_\Y$, $\C := \A \B$. 
+	Dann gilt:
+	\begin{align*}
+		W(t) ={}& \E[(\Y - \muu - \C \X)^\top \Ggamma (\Y - \muu - \C \X)] \\
+		={}& \E[(\Y_c - \C \X_c + (\muu_\Y - \C \muu_\X - \muu))^\top \Ggamma (\Y_c - \C \X_c + (\muu_\Y - \C \muu_\X - \muu))] \\
+		={}& \E[(\Y_c - \C \X_c)^\top \Ggamma (\Y_c - \C \X_c)] + \underbrace{(\muu_\Y - \C \muu_\X - \muu)^\top \Ggamma (\muu_\Y - \C \muu_\X - \muu)}_{\geq 0 \quad \text{(da } \Ggamma \text{ symmetrisch positiv definit)}} \label{eq:3.3} \tag{3.3}
+	\end{align*} 
+	Unser Ziel ist es nun, \eqref{eq:3.3} zu minimieren, indem wir zunächst den ersten Term nach $\C$ minimieren. Für das so festgelegte $\C_{\min}$ lässt sich $\muu_{\min} := \muu_\Y - \C \muu_\X$ aber immer noch so wählen, dass der zweite Term zu $0$ wird, was impliziert, dass die so bestimmte Kombination $(\muu_{\min}, \C_{\min})$ tatsächlich $W(t)$ minimiert.
+
+	Mit $\Ssigma_{\X\X}^\ast := \Ssigma_{\X\X}$, $\Ssigma_{\Y\Y}^\ast := \Ggamma^{1/2} \Ssigma_{\Y\Y} \Ggamma^{1/2}$, $\Ssigma_{\Y\X}^\ast := \Ggamma^{1/2} \Ssigma_{\Y\X}$, $\Ssigma_{\X\Y}^\ast := \Ssigma_{\X\Y} \Ggamma^{1/2}$ und $\C^\ast := \Ggamma^{1/2} \C$ ist
+	\begin{align*}
+		\E[(\Y_c - \C \X_c)^\top \Ggamma (\Y_c - \C \X_c)] ={}& \E[\Y_c^\top \Ggamma \Y_c - \X_c^\top \C^\top \Ggamma \Y_c - \Y_c^\top \Ggamma \C
+		\X_c + \X_c^\top \C^\top \Ggamma \C \X_c] \\
+		={}& \tr(\Ssigma_{\Y\Y}^\ast - \C^\ast \Ssigma_{\X\Y}^\ast - \Ssigma_{\Y\X}^\ast \C^{\ast
+			\top} + \C^\ast \Ssigma_{\X\X}^\ast \C^{\ast \top}) \\
+		={}& \tr(\Ssigma_{\Y\Y}^\ast - \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1}
+		\Ssigma_{\X\Y}^\ast) \\
+		&+ \tr( \; (\C^\ast \Ssigma_{\X\X}^{\ast 1/2} - \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2}) \\
+		& \qquad \cdot (\C^\ast \Ssigma_{\X\X}^{\ast 1/2} - \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top \; ) \text{.} \label{eq:3.4} \tag{3.4}                                                   
+	\end{align*}
+    Sei nun 
+    $$k := \rk \, \Ssigma_{\Y\X} = \rk \, \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2}$$ 
+    und seien $\uu_i$ orthonormale Eigenvektoren zum jeweils $i$-größten Eigenwert $\lambda_i$ von
+	$$(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top = \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1} \Ssigma_{\X\Y}^\ast = \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}$$
+	für $1 \leq i \leq \min\{k, t\}$ und 
+	$$\vv_i := \lambda_i^{-1/2} \Ssigma_{\X\X}^{\ast -1/2} \Ssigma_{\X\Y}^\ast \uu_i = \lambda_i^{-1/2} \Ssigma_{\X\X}^{-1/2} \Ssigma_{\X\Y} \Ggamma^{1/2} \uu_i$$
+	zugehörige orthonormale Eigenvektoren von $(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})$, so lässt sich der Satz von Eckart-Young (Lemma~\ref{thm:eckart-young}) wie folgt anwenden: Der zweite Term wird minimal für 
+	$$\C^\ast \Ssigma_{\X\X}^{\ast 1/2} = \Ggamma^{1/2} \C \Ssigma_{\X\X}^{1/2} = \sum_{i=1}^{t} \lambda_i^{1/2} \uu_i \vv_i^\top \text{,}$$
+	also folgt, dass
+	\begin{align*}
+		\C^{(t)}_{\min} :={}& \Ggamma^{-1/2} \biggl( \, \sum_{i=1}^{\min\{k, t\}} \lambda_i^{1/2} \uu_i \vv_i^\top \biggr) \Ssigma_{\X\X}^{-1/2} \\
+		                 ={}& \Ggamma^{-1/2} \biggl( \, \sum_{i=1}^{\min\{k, t\}} \uu_i \uu_i^\top \biggr) \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}
+	\end{align*}
+	den ersten Summand von \ref{eq:3.3} über alle Matrizen $\C \in \R^{s \times r}$ von Rang $\leq t$ minimiert.
+	
+	
+\end{proof}
 
 \newpage
 
 \begin{thebibliography}{9}
-	\bibitem[Izenman]{Izenman} 
+	\bibitem[Iz08]{Iz08} 
 	Izenman, Alan Julian.
 	\textit{Modern Multivariate Statistical Techniques: Regression, Classification, and Manifold Learning}. 
 	Springer Texts in Statistics, Springer-Verlag New York, 2008.
+	\bibitem[BZ21]{BZ21}
+	Bandeira, Afonso S. und Zhivotovskiy, Nikita.
+	\textit{Lecture Notes for Mathematics of Machine Learning}. 2021.
+	\url{https://metaphor.ethz.ch/x/2021/fs/401-2684-00L/sc/Math_of_ML_Lecture_Notes.pdf}
 \end{thebibliography}
 
 
