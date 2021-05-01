@@ -1,5 +1,6 @@
 \documentclass[]{article}
 
+\usepackage[margin=1.5in]{geometry}
 \usepackage[utf8]{inputenc} % this is needed for umlauts
 \usepackage[ngerman]{babel} % this is needed for umlauts
 \usepackage[T1]{fontenc}    % this is needed for correct output of umlauts in pdf
@@ -16,6 +17,7 @@
 \newcommand{\T}{\mathbf{\Theta}}
 \newcommand{\muu}{\bm{\mu}}
 \newcommand{\Ssigma}{\mathbf{\Sigma}}
+\newcommand{\vv}{\mathbf{v}}
 
 
 %opening
@@ -49,15 +51,63 @@ $$ \muu_\X := \E\X, \quad \muu_\Y := \E\Y \quad \text{und} \quad \begin{pmatrix}
 \X \\
 \Y
 \end{pmatrix}\biggr).$$
-Außer $\Pb^\X \ll \lambda^r$ und $\Pb^\Y \ll \lambda^s$, d.h. der Stetigkeit der Zufallsvektoren $\X$ und $\Y$, möchten wir zunächst keine
-weiteren Annahmen über die Verteilung von $\X$ und $\Y$ treffen.
+Abgesehen von $\Pb^\X \ll \lambda^r$ und $\Pb^\Y \ll \lambda^s$, d.h. der Stetigkeit der Zufallsvektoren $\X$ und $\Y$, möchten wir zunächst keine
+weiteren Annahmen über die Verteilungen von $\X$ und $\Y$ treffen.
 
 \section{Klassisches multivariates Regressionsmodell mit zufälliger Inputvariable}
 Das klassische multivariate Regressionsmodell mit zufälliger Inputvariable ist von folgender Form: Für $\X$ und $\Y$ gelte
 $$ \Y = \muu + \T \X + \mathcal{E} \text{,} $$
 wobei $\muu \in \R^s$ und $\T \in \R^{s \times r}$ unbekannte Parameter seien sowie $\mathcal{E}$ ein (nicht beobachtbarer) $s$-dimensionaler zufälliger Fehler ist mit Erwartungswert $\E \mathcal{E} = 0$ und Kovarianzmatrix $\Ssigma_{\mathcal{E} \mathcal{E}}$. Zudem werden $\X$ und
 $\mathcal{E}$ als unabhängig vorausgesetzt.
+\\
 
+Ausgehend von der Situation aus der Einleitung wollen wir nun optimale $\muu$ und $\T$ finden in dem Sinne, dass
+$$W(\muu, \T) := \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \in \R^{s \times s}$$ in der Spektralnorm
+$$ \| \mathbf{A} \|_2 := \max_{\| \vv \|_2 = 1} \| \mathbf{A} \vv \|_2 \text{,} \quad \mathbf{A} \in \R^{s \times s} $$ 
+minimiert wird.
+Für symmetrische, positiv semidefinite Matrizen $\mathbf{A}$ lässt sich (etwa mit dem Spektralsatz) zeigen, dass
+$$ \| \mathbf{A} \|_2 = \max_{\| \vv \|_2 = 1} \vv^\top \mathbf{A} \vv = \lambda_{\max} (\mathbf{A}) \text{,} $$
+wobei $\lambda_{\max} (\mathbf{A})$ der größte Eigenvektor von $\mathbf{A}$ sei. Da $W(\muu, \T)$ für alle möglichen $\muu$, $\T$ symmetrisch
+positiv semidefinit ist, werden wir diese Darstellung der Spektralnorm auch zur Minimierung von $\| W(\muu, \T) \|_2$  benutzen.
+\\
+
+Unter der zusätzlichen Annahme, dass $\Ssigma_{\X\X}$ nichtsingulär ist, und mit $\X_c := \X - \muu_\X$, $\Y_c := \Y - \muu_\Y$ gilt für alle $\T \in \R^{s \times r}$, $\muu \in \R^s$:
+\begin{align*}
+	W(\muu, \T) ={}& \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \\
+	            ={}& \E[(\Y_c - \T \X_c + (\muu_\Y - \T \muu_\X - \muu))(\Y_c - \T \X_c + (\muu_\Y - \T \muu_\X - \muu))^\top] \\
+	            ={}& \E[\Y_c \Y_c^\top - \Y_c \X_c^\top \T^\top + \Y_c (\muu_\Y - \T \muu_\X - \muu)^\top \\
+	               & \quad - \T \X_c \Y_c^\top + \T \X_c \X_c^\top \T^\top - \T \X_c (\muu_\Y - \T \muu_\X - \muu)^\top \\
+	               & \quad + (\muu_\Y - \T \muu_\X - \muu) \Y_c^\top - (\muu_\Y - \T \muu_\X - \muu) \X_c^\top \T^\top \\
+	               & \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top] \\
+	            ={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \T^\top - \T \Ssigma_{\X\Y} + \T \Ssigma_{\X\X} \T^\top \\
+	               & \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \\
+	            ={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \\
+	               & \quad + (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})(\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})^\top \\
+	               & \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \text{,}
+\end{align*}
+und mit $$A(\T) := \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2} \quad \text{,} \quad B(\muu, \T) := \muu_\Y - \T \muu_\X - \muu$$ gilt für $\vv \in \R^s$, $\| \vv \|_2 = 1$:
+\begin{align*}
+	\vv^\top W(\muu, \T) \vv ={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
+	                                            + \vv^\top A(\T)^\top A(\T) \vv + \vv^\top B(\muu, \T)^\top B(\muu, \T) \vv \\
+	                         ={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
+	                         + \| A(\T) \vv \|_2 + \| B(\muu, \T) \vv \|_2 \\
+	                         \geq{}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
+\end{align*}
+und daher ist
+$$ \| W(\muu, \T) \|_2 \geq \| \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \|_2 \text{,}$$
+mit Gleichheit falls $A(\T) = B(\muu, \T) = 0$, was der Fall ist, wenn
+$$ \muu = \muu_\Y - \T \muu_\X \quad \text{und} \quad \T = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \text{.}$$
+Dann ist
+\begin{align*}
+	\mathcal{E} ={}& \Y - \muu - \T \X \\
+	            ={}& \Y - (\muu_\Y - (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) \muu_\X) - (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) \X \\
+	            ={}& \Y_c - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \X_c
+\end{align*}
+und es gilt offensichtlich $\E \mathcal{E} = 0$ sowie
+$$\E[\mathcal{E} \X_c^\top] = \E[(\Y_c - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \X_c) \X_c^\top] = \Ssigma_{\Y\X} - \Ssigma_{\Y\X}\Ssigma_{\X\X}^{-1} \Ssigma_{\X\X} = 0 \text{,}$$
+d.h. $\X$ und $\mathcal{E}$ sind unkorreliert.
+
+\section{Reduced-Rank-Regressionsmodell}
 
 
 
