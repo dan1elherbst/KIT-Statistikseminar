@@ -9,6 +9,8 @@
 \usepackage{bm}
 \usepackage{amsthm}
 \usepackage{hyperref}
+\usepackage{mdframed}
+\usepackage{xcolor}
 
 \newcommand{\Pb}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
@@ -28,9 +30,9 @@
 \newcommand{\Ggamma}{\mathbf{\Gamma}}
 \newcommand{\tr}{\mathrm{tr}}
 
-\newtheorem{definition}{Definition}[section]
-\newtheorem{theorem}[definition]{Satz}
-\newtheorem{lemma}[definition]{Lemma}
+\newmdtheoremenv[backgroundcolor=black!5, innertopmargin=-2pt]{definition}{Definition}[section]
+\newmdtheoremenv[backgroundcolor=black!5, innertopmargin=-2pt]{theorem}[definition]{Satz}
+\newmdtheoremenv[backgroundcolor=black!5, innertopmargin=-2pt]{lemma}[definition]{Lemma}
 \newtheorem*{remark}{Bemerkung}
 \DeclareMathOperator*{\argmin}{argmin}
 
@@ -151,32 +153,24 @@ wobei $\muu$, $\A$ und $\B$ nun die unbekannten Parameter sind.
 
 Auch hier möchten wir für $\X$ und $\Y$ wie in Satz~\ref{thm:mr} $\muu \in \R^s$, $\A \in \R^{s \times t}$ und $\B \in \R^{t \times r}$ finden, die $\Y - \muu - \A \B \X$ auf eine gewisse Art und Weise minimieren, gehen hier aber etwas anders vor:
 Für eine symmetrische, positiv definite Gewichtsmatrix $\Ggamma \in \R^{s \times s}$ wollen wir nun 
-$$ W(t) := \E[(\Y - \muu - \A \B \X)^{\top} \Ggamma (\Y - \muu - \A \B \X)]$$
+$$ W_{t, \Ggamma}(\muu, \A, \B) := \E[(\Y - \muu - \A \B \X)^{\top} \Ggamma (\Y - \muu - \A \B \X)]$$
 über $\muu$, $\A$ und $\B$ minimieren.
 
 \begin{theorem}
 	\label{thm:rrr}
-	Hier steht dann einmal der passende Satz.
+	Seien $\X$ und $\Y$ wie in der \nameref{Einleitung}, $\Ssigma_{\X\X}$ nichtsingulär und $t \leq \rk \, \Ssigma_{\Y\X} \leq s$. Dann ist
+	$$\argmin_{(\muu, \A, \B)} W_{t, \Ggamma}(\muu, \A, \B) = (\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min})$$ mit
+	\begin{alignat*}{3}
+		&\A^{(t)}_{\min}   &&:= \Ggamma^{-1/2} \mathbf{U}_t                                       &&\quad \in \R^{s \times t} \\
+		&\B^{(t)}_{\min}   &&:= \mathbf{U}_t^\top \Ggamma^{1/2} \Ssigma_{\Y\X}\Ssigma_{\X\X}^{-1} &&\quad \in \R^{t \times r} \\
+		&\muu^{(t)}_{\min} &&:= \muu_\Y - \A^{(t)}_{\min} \B^{(t)}_{\min} \muu_\X                 &&\quad \in \R^s \text{,}
+	\end{alignat*}
+	wobei $\mathbf{U}_t := (\uu_1,\dots, \uu_t) \in \R^{s \times t}$ und $\uu_1,\dots, \uu_t$ orthonormale Eigenvektoren zu den Eigenwerten $\lambda_1 \geq \dots \geq \lambda_t > 0$ von $\Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}$ seien.
+	Ferner gilt
+	$$W_{t, \Ggamma}(\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min}) = \tr(\Ssigma_{\Y\Y}) \tr(\Ggamma) - \sum_{i=1}^{t} \lambda_i \text{.}$$
 \end{theorem}
 
 Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebra:
-\begin{definition}[Singulärwertzerlegung]
-	Sei $\A \in \R^{m \times n}$ mit $r := \rk \, \A \leq \min\{m, n\}$. 
-	Dann existiert eine Faktorisierung 
-	$$\A = \mathbf{U} \mathbf{S} \mathbf{V}^\top = \sum_{i=1}^{r} \sigma_i \mathbf{u}_i \mathbf{v}_i^\top$$
-	mit $\mathbf{U} = (\mathbf{u}_1, \dots \mathbf{u}_m) \in O(m), \mathbf{V} = (\mathbf{v}_1, \dots \mathbf{v}_n) \in O(n)$ und einer Diagonalmatrix $\mathbf{S} \in \R^{m \times n}$ mit 
-	$$\mathbf{S} = \begin{pmatrix}
-		\Ssigma & 0 \\
-		0       & 0
-	\end{pmatrix} \text{,} \quad \Ssigma = \mathrm{diag}(\sigma_1,\dots,\sigma_r) \in \R^{r \times r} \text{,} \quad \sigma_1 \geq \dots \geq  \sigma_r > 0 \text{.}$$
-	Hierbei sind außerdem:
-	\begin{itemize}
-		\itemsep -0.2em
-		\item $\mathbf{v}_1,\dots,\mathbf{v}_n$ Eigenvektoren von $\A^\top \A$ zu den Eigenwerten $\sigma_1^2 \geq \dots \geq \sigma_r^2 > 0 = \dots = 0$
-		\item $\mathbf{u}_1,\dots,\mathbf{u}_m$ Eigenvektoren von $\A \A^\top$ zu den Eigenwerten $\sigma_1^2 \geq \dots \geq \sigma_r^2 > 0 = \dots = 0$.
-	\end{itemize}
-	
-\end{definition}
 
 \begin{lemma}[Satz von Eckart-Young]
 	\label{thm:eckart-young}
@@ -186,27 +180,28 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 	$$\lambda_j((\A - \B)(\A - \B)^\top) \geq \lambda_{j+b}(\A \A^\top)$$
 	mit Gleichheit für
 	$$\A_b := \sum_{i=1}^{b} \lambda_i^{1/2} \mathbf{u}_i \mathbf{v}_i^\top \text{,}$$
-	wobei $\lambda_i := \lambda_i(\A \A^\top)$ und $\mathbf{u}_i$ bzw. $\mathbf{v}_i$ seien jeweils orthonormale Eigenvektoren von $\A \A^\top$ bzw. 
-	$\A^\top \A$.
+	wobei $\lambda_i := \lambda_i(\A \A^\top)$ und $\mathbf{u}_i$ bzw. $\mathbf{v}_i$ jeweils orthonormale Eigenvektoren von $\A \A^\top$ bzw. 
+	$\A^\top \A$ zu $\lambda_i$ seien.
 \end{lemma}
+
+\begin{proof}
+	Der Beweis nutzt die Singulärwertzerlegung und folgt etwa direkt aus \cite[Satz 4.6]{BZ21}.
+\end{proof}
 
 \begin{remark}
 	Insbesondere zeigt Lemma~\ref{thm:eckart-young}, dass das dort definierte $\A_b$ den Abstand von $\A$ unter allen Rang-$b$-Matrizen in $\R^{m \times n}$ in der Spektralnorm minimiert.
 \end{remark}
 
-\begin{proof}
-	Folgt etwa direkt aus \cite[Satz 4.6]{BZ21}.
-\end{proof}
-
 \begin{proof}[Beweis von Satz~\ref{thm:rrr}]
 	Seien $\muu \in \R^s$, $\A \in \R^{s \times t}$, $\B \in \R^{t \times r}$ und setze $\X_c := \X - \muu_\X$, $\Y_c = \Y - \muu_\Y$, $\C := \A \B$. 
 	Dann gilt:
 	\begin{align*}
-		W(t) ={}& \E[(\Y - \muu - \C \X)^\top \Ggamma (\Y - \muu - \C \X)] \\
+		W_{t, \Ggamma}(\muu, \C) ={}& \E[(\Y - \muu - \C \X)^\top \Ggamma (\Y - \muu - \C \X)] \\
 		={}& \E[(\Y_c - \C \X_c + (\muu_\Y - \C \muu_\X - \muu))^\top \Ggamma (\Y_c - \C \X_c + (\muu_\Y - \C \muu_\X - \muu))] \\
-		={}& \E[(\Y_c - \C \X_c)^\top \Ggamma (\Y_c - \C \X_c)] + \underbrace{(\muu_\Y - \C \muu_\X - \muu)^\top \Ggamma (\muu_\Y - \C \muu_\X - \muu)}_{\geq 0 \quad \text{(da } \Ggamma \text{ symmetrisch positiv definit)}} \label{eq:3.3} \tag{3.3}
+		={}& \E[(\Y_c - \C \X_c)^\top \Ggamma (\Y_c - \C \X_c)] \\
+		   & \quad + \underbrace{(\muu_\Y - \C \muu_\X - \muu)^\top \Ggamma (\muu_\Y - \C \muu_\X - \muu)}_{\geq 0 \quad \text{(da } \Ggamma \text{ symmetrisch positiv definit)}} \label{eq:3.3} \tag{3.3}
 	\end{align*} 
-	Unser Ziel ist es nun, \eqref{eq:3.3} zu minimieren, indem wir zunächst den ersten Term nach $\C$ minimieren. Für das so festgelegte $\C_{\min}$ lässt sich $\muu_{\min} := \muu_\Y - \C \muu_\X$ aber immer noch so wählen, dass der zweite Term zu $0$ wird, was impliziert, dass die so bestimmte Kombination $(\muu_{\min}, \C_{\min})$ tatsächlich $W(t)$ minimiert.
+	Unser Ziel ist es nun, \eqref{eq:3.3} zu minimieren, indem wir zunächst den ersten Term nach $\C$ minimieren. Für das so festgelegte $\C_{\min}$ lässt sich $\muu_{\min} := \muu_\Y - \C_{\min} \muu_\X$ aber immer noch so wählen, dass der zweite Term zu $0$ wird, was impliziert, dass die so bestimmte Kombination $(\muu_{\min}, \C_{\min})$ tatsächlich $W_{t, \Ggamma}(\muu, \C)$ minimiert. \\
 
 	Mit $\Ssigma_{\X\X}^\ast := \Ssigma_{\X\X}$, $\Ssigma_{\Y\Y}^\ast := \Ggamma^{1/2} \Ssigma_{\Y\Y} \Ggamma^{1/2}$, $\Ssigma_{\Y\X}^\ast := \Ggamma^{1/2} \Ssigma_{\Y\X}$, $\Ssigma_{\X\Y}^\ast := \Ssigma_{\X\Y} \Ggamma^{1/2}$ und $\C^\ast := \Ggamma^{1/2} \C$ ist
 	\begin{align*}
@@ -220,21 +215,33 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 		& \qquad \cdot (\C^\ast \Ssigma_{\X\X}^{\ast 1/2} - \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top \; ) \text{.} \label{eq:3.4} \tag{3.4}                                                   
 	\end{align*}
     Sei nun 
-    $$k := \rk \, \Ssigma_{\Y\X} = \rk \, \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2}$$ 
+    $$k := \rk \, \Ssigma_{\Y\X} = \rk \, \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2} \geq t$$ 
     und seien $\uu_i$ orthonormale Eigenvektoren zum jeweils $i$-größten Eigenwert $\lambda_i$ von
 	$$(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top = \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1} \Ssigma_{\X\Y}^\ast = \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}$$
-	für $1 \leq i \leq \min\{k, t\}$ und 
+	für $1 \leq i \leq k$ und 
 	$$\vv_i := \lambda_i^{-1/2} \Ssigma_{\X\X}^{\ast -1/2} \Ssigma_{\X\Y}^\ast \uu_i = \lambda_i^{-1/2} \Ssigma_{\X\X}^{-1/2} \Ssigma_{\X\Y} \Ggamma^{1/2} \uu_i$$
 	zugehörige orthonormale Eigenvektoren von $(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})$, so lässt sich der Satz von Eckart-Young (Lemma~\ref{thm:eckart-young}) wie folgt anwenden: Der zweite Term wird minimal für 
-	$$\C^\ast \Ssigma_{\X\X}^{\ast 1/2} = \Ggamma^{1/2} \C \Ssigma_{\X\X}^{1/2} = \sum_{i=1}^{t} \lambda_i^{1/2} \uu_i \vv_i^\top \text{,}$$
-	also folgt, dass
+	$$\C^\ast \Ssigma_{\X\X}^{\ast 1/2} = \Ggamma^{1/2} \C \Ssigma_{\X\X}^{1/2} = \sum_{i=1}^{t} \lambda_i^{1/2} \uu_i \vv_i^\top$$
+	(denn die Spur ist als Summe der Eigenwerte monoton steigend in jedem Eigenwert), also folgt, dass
 	\begin{align*}
-		\C^{(t)}_{\min} :={}& \Ggamma^{-1/2} \biggl( \, \sum_{i=1}^{\min\{k, t\}} \lambda_i^{1/2} \uu_i \vv_i^\top \biggr) \Ssigma_{\X\X}^{-1/2} \\
-		                 ={}& \Ggamma^{-1/2} \biggl( \, \sum_{i=1}^{\min\{k, t\}} \uu_i \uu_i^\top \biggr) \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}
+		\C^{(t)}_{\min} :={}& \Ggamma^{-1/2} \biggl( \sum_{i=1}^{t} \lambda_i^{1/2} \uu_i \vv_i^\top \biggr) \Ssigma_{\X\X}^{-1/2} \\
+		                 ={}& \Ggamma^{-1/2} \biggl( \sum_{i=1}^{t} \uu_i \uu_i^\top \biggr) \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}
 	\end{align*}
-	den ersten Summand von \ref{eq:3.3} über alle Matrizen $\C \in \R^{s \times r}$ von Rang $\leq t$ minimiert.
-	
-	
+	den ersten Summand von \eqref{eq:3.3} über alle Matrizen $\C \in \R^{s \times r}$ von Rang $\leq t$ minimiert.
+	Daher wird $W_{t, \Ggamma}(\muu, \A, \B)$ nun minimal für
+	\begin{alignat*}{3}
+		&\A^{(t)}_{\min}   &&= \Ggamma^{-1/2} \mathbf{U}_t                                       &&\quad \in \R^{s \times t} \\
+		&\B^{(t)}_{\min}   &&= \mathbf{U}_t^\top \Ggamma^{1/2} \Ssigma_{\Y\X}\Ssigma_{\X\X}^{-1} &&\quad \in \R^{t \times r} \\
+		&\muu^{(t)}_{\min} &&= \muu_\Y - \A^{(t)}_{\min} \B^{(t)}_{\min} \muu_\X                 &&\quad \in \R^s \text{,}
+	\end{alignat*}
+	wobei $\mathbf{U}_t := (\uu_1,\dots, \uu_t) \in \R^{s \times t}$.
+	Mit \eqref{eq:3.3}, \eqref{eq:3.4} ist das dadurch angenommene Minimum dann
+	\begin{align*}
+		W_{t, \Ggamma}(\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min}) ={}& \tr( \Ggamma^{1/2} \Ssigma_{\Y\Y} \Ggamma^{1/2} - \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}) \\
+																			   &+ \tr( (\sum_{i=t+1}^{k} \lambda_i^{1/2} \uu_i \vv_i^\top) (\sum_{i=t+1}^{k} \lambda_i^{1/2} \uu_i \vv_i^\top)^\top \; ) \\
+																			={}& \tr(\Ssigma_{\Y\Y}) \tr(\Ggamma) - \tr(\Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}) + \sum_{i=t+1}^{k} \lambda_i \\
+																			={}& \tr(\Ssigma_{\Y\Y}) \tr(\Ggamma) - \sum_{i=1}^{t} \lambda_i	\text{.} \qedhere										
+	\end{align*}
 \end{proof}
 
 \newpage
