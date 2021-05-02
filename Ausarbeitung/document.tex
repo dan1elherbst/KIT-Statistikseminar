@@ -29,6 +29,10 @@
 \newcommand{\B}{\mathbf{B}}
 \newcommand{\Ggamma}{\mathbf{\Gamma}}
 \newcommand{\tr}{\mathrm{tr}}
+\newcommand{\xx}{\mathbf{x}}
+\newcommand{\yy}{\mathbf{y}}
+\newcommand{\XX}{\mathcal{X}}
+\newcommand{\YY}{\mathcal{Y}}
 
 \newmdtheoremenv[backgroundcolor=black!5, innertopmargin=-2pt]{definition}{Definition}[section]
 \newmdtheoremenv[backgroundcolor=black!5, innertopmargin=-2pt]{theorem}[definition]{Satz}
@@ -151,21 +155,23 @@ lässt sich nun schreiben als
 \[\Y = \muu + \A \B \X + \mathcal{E} \text{,} \label{eq:3.2} \tag{3.2}\]
 wobei $\muu$, $\A$ und $\B$ nun die unbekannten Parameter sind.
 
-Auch hier möchten wir für $\X$ und $\Y$ wie in Satz~\ref{thm:mr} $\muu \in \R^s$, $\A \in \R^{s \times t}$ und $\B \in \R^{t \times r}$ finden, die $\Y - \muu - \A \B \X$ auf eine gewisse Art und Weise minimieren, gehen hier aber etwas anders vor:
+\subsection*{Ein Kleinste-Quadrate-Kriterium}
+
+Auch hier möchten wir für $\X$ und $\Y$ wie in Satz~\ref{thm:mr} $\muu \in \R^s$, $\A \in \R^{s \times t}$ und $\B \in \R^{t \times r}$ finden, die $\Y - \muu - \A \B \X$ auf eine gewisse Art und Weise minimieren, gehen nun aber etwas anders vor:
 Für eine symmetrische, positiv definite Gewichtsmatrix $\Ggamma \in \R^{s \times s}$ wollen wir nun 
 $$ W_{t, \Ggamma}(\muu, \A, \B) := \E[(\Y - \muu - \A \B \X)^{\top} \Ggamma (\Y - \muu - \A \B \X)]$$
 über $\muu$, $\A$ und $\B$ minimieren.
 
 \begin{theorem}
 	\label{thm:rrr}
-	Seien $\X$ und $\Y$ wie in der \nameref{Einleitung}, $\Ssigma_{\X\X}$ nichtsingulär und $t \leq \rk \, \Ssigma_{\Y\X} \leq s$. Dann ist
+	Seien $\X$ und $\Y$ wie in der \nameref{Einleitung}, $\Ssigma_{\X\X}$ nichtsingulär und $1 \leq t \leq s$. Dann ist
 	$$\argmin_{(\muu, \A, \B)} W_{t, \Ggamma}(\muu, \A, \B) = (\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min})$$ mit
 	\begin{alignat*}{3}
 		&\A^{(t)}_{\min}   &&:= \Ggamma^{-1/2} \mathbf{U}_t                                       &&\quad \in \R^{s \times t} \\
 		&\B^{(t)}_{\min}   &&:= \mathbf{U}_t^\top \Ggamma^{1/2} \Ssigma_{\Y\X}\Ssigma_{\X\X}^{-1} &&\quad \in \R^{t \times r} \\
 		&\muu^{(t)}_{\min} &&:= \muu_\Y - \A^{(t)}_{\min} \B^{(t)}_{\min} \muu_\X                 &&\quad \in \R^s \text{,}
 	\end{alignat*}
-	wobei $\mathbf{U}_t := (\uu_1,\dots, \uu_t) \in \R^{s \times t}$ und $\uu_1,\dots, \uu_t$ orthonormale Eigenvektoren zu den Eigenwerten $\lambda_1 \geq \dots \geq \lambda_t > 0$ von $\Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}$ seien.
+	wobei $\mathbf{U}_t := (\uu_1,\dots, \uu_t) \in \R^{s \times t}$ und $\uu_1,\dots, \uu_t$ orthonormale Eigenvektoren zu den Eigenwerten $\lambda_1 \geq \dots \geq \lambda_t \geq 0$ von $\Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}$ seien.
 	Ferner gilt
 	$$W_{t, \Ggamma}(\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min}) = \tr(\Ssigma_{\Y\Y}) \tr(\Ggamma) - \sum_{i=1}^{t} \lambda_i \text{.}$$
 \end{theorem}
@@ -185,7 +191,7 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 \end{lemma}
 
 \begin{proof}
-	Der Beweis nutzt die Singulärwertzerlegung und folgt etwa direkt aus \cite[Satz 4.6]{BZ21}.
+	Folgt (unter Benutzung der Singulärwertzerlegung von $\A$) etwa direkt aus \cite[Satz 4.6]{BZ21}.
 \end{proof}
 
 \begin{remark}
@@ -214,17 +220,18 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 		&+ \tr( \; (\C^\ast \Ssigma_{\X\X}^{\ast 1/2} - \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2}) \\
 		& \qquad \cdot (\C^\ast \Ssigma_{\X\X}^{\ast 1/2} - \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top \; ) \text{.} \label{eq:3.4} \tag{3.4}                                                   
 	\end{align*}
-    Sei nun 
-    $$k := \rk \, \Ssigma_{\Y\X} = \rk \, \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2} \geq t$$ 
+    Sei nun
+    $$k:= \rk \, \Ssigma_{\Y\X} = \rk \, \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2}$$
     und seien $\uu_i$ orthonormale Eigenvektoren zum jeweils $i$-größten Eigenwert $\lambda_i$ von
 	$$(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top = \Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1} \Ssigma_{\X\Y}^\ast = \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2}$$
-	für $1 \leq i \leq k$ und 
-	$$\vv_i := \lambda_i^{-1/2} \Ssigma_{\X\X}^{\ast -1/2} \Ssigma_{\X\Y}^\ast \uu_i = \lambda_i^{-1/2} \Ssigma_{\X\X}^{-1/2} \Ssigma_{\X\Y} \Ggamma^{1/2} \uu_i$$
-	zugehörige orthonormale Eigenvektoren von $(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})$, so lässt sich der Satz von Eckart-Young (Lemma~\ref{thm:eckart-young}) wie folgt anwenden: Der zweite Term wird minimal für 
-	$$\C^\ast \Ssigma_{\X\X}^{\ast 1/2} = \Ggamma^{1/2} \C \Ssigma_{\X\X}^{1/2} = \sum_{i=1}^{t} \lambda_i^{1/2} \uu_i \vv_i^\top$$
+	für $1 \leq i \leq s$ sowie 
+	$$\vv_i := \lambda_i^{-1/2} \Ssigma_{\X\X}^{\ast -1/2} \Ssigma_{\X\Y}^\ast \uu_i = \lambda_i^{-1/2} \Ssigma_{\X\X}^{-1/2} \Ssigma_{\X\Y} \Ggamma^{1/2} \uu_i\text{,} \quad 1 \leq i \leq k$$
+	zugehörige orthonormale Eigenvektoren von $(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})^\top(\Ssigma_{\Y\X}^\ast \Ssigma_{\X\X}^{\ast -1/2})$, wobei wir für $i > k$ die restlichen $\vv_i$ so definieren, dass wir eine Orthonormalbasis von $\R^r$ erhalten. Dann lässt sich der Satz von Eckart-Young (Lemma~\ref{thm:eckart-young}) wie folgt anwenden: Der zweite Term von \eqref{eq:3.4} wird minimal für 
+	$$\C^\ast \Ssigma_{\X\X}^{\ast 1/2} = \Ggamma^{1/2} \C \Ssigma_{\X\X}^{1/2} = \sum_{i=1}^{\min\{k, t\}} \lambda_i^{1/2} \uu_i \vv_i^\top$$
 	(denn die Spur ist als Summe der Eigenwerte monoton steigend in jedem Eigenwert), also folgt, dass
 	\begin{align*}
-		\C^{(t)}_{\min} :={}& \Ggamma^{-1/2} \biggl( \sum_{i=1}^{t} \lambda_i^{1/2} \uu_i \vv_i^\top \biggr) \Ssigma_{\X\X}^{-1/2} \\
+		\C^{(t)}_{\min} :={}& \Ggamma^{-1/2} \biggl( \, \sum_{i=1}^{\min\{k, t\}} \lambda_i^{1/2} \uu_i \vv_i^\top \biggr) \Ssigma_{\X\X}^{-1/2} \\
+		                 ={}& \Ggamma^{-1/2} \biggl( \, \sum_{i=1}^{\min\{k, t\}} \uu_i \uu_i^\top \biggr) \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \\
 		                 ={}& \Ggamma^{-1/2} \biggl( \sum_{i=1}^{t} \uu_i \uu_i^\top \biggr) \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}
 	\end{align*}
 	den ersten Summand von \eqref{eq:3.3} über alle Matrizen $\C \in \R^{s \times r}$ von Rang $\leq t$ minimiert.
@@ -243,6 +250,50 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 																			={}& \tr(\Ssigma_{\Y\Y}) \tr(\Ggamma) - \sum_{i=1}^{t} \lambda_i	\text{.} \qedhere										
 	\end{align*}
 \end{proof}
+
+\begin{remark} 
+		Für $t = s$ ist $\sum_{i=1}^{s} \uu_i \uu_i^\top = \mathbf{I}_s \in \R^{s \times s}$, also $\C^{(t)}_{\min} = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} = \T$ und damit sind in diesem Fall die Vorgehensweisen aus Satz~\ref{thm:mr} und Satz~\ref{thm:rrr} äquivalent.
+\end{remark}
+
+\subsection*{Spezialfälle}
+
+Für spezielle Wahlen von $\Ggamma$ und $\X, \Y$ können wir nun wie angekündigt mit der Reduced-Rank-Regression einige klassische Methoden der multivariaten Statistik zusammenfassen, die wir teilweise auch noch in diesem Seminar kennenlernen werden:
+\begin{itemize}
+	\item Im Fall $\X = \Y$ und $\Ggamma = \mathbf{I}_s$ erhalten wir die \textit{Hauptkomponentenanalyse (principal component analysis, PCA)} (Vortrag 6).
+	\item Für $\Ggamma = \Ssigma_{\Y\Y}^{-1}$ erhalten wir die \textit{kanonische Korrelationsanalyse} (Vortrag 7).
+	\item Nutzen wir das Setup der kanonischen Korrelationsanalyse für einen $\{0, 1\}$-wertigen Vektor $\Y$, der Gruppenzugehörigkeiten modelliert, erhalten wir die \textit{lineare Diskriminanzanalyse} (Vortrag 8).
+\end{itemize}
+
+\subsection*{Stichprobenschätzung bei der Reduced-Rank-Regression}
+
+Um Satz~\ref{thm:rrr} zu verwenden, werden $\muu_\X, \muu_\Y$ und $\Ssigma_{\X\X}. \Ssigma_{\X\Y}, \Ssigma_{\Y\X}, \Ssigma_{\Y\Y}$ benötigt, die in der Regel natürlich unbekannt sind. Stattdessen liegt häufig eine Stichprobe von $n \in \N$ Beobachtungen 
+$$\mathcal{D} := \{(x_j, y_j) \;|\; 1 \leq i \leq n\}$$ 
+vor, die wir als unabhängige Realisierungen von $r$- bzw. $s$-dimensionalen Zufallsvektoren $\X$ bzw. $\Y$ (wie in der \nameref{Einleitung}) auffassen.
+
+Damit schätzen wir $\muu_\X$ und $\muu_\Y$ auf naheliegende Weise:
+\[\widehat{\muu}_{\X} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{x}_j = \bar{x}_n \text{,} \quad \widehat{\muu}_{\Y} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{y}_j = \bar{y}_n \label{eq:3.5} \tag{3.5}\]
+Für die Kovarianzmatrizen definieren wir zunächst
+$$\xx_{cj} := \xx_j - \hat{x}_n \text{,} \quad \yy_{cj} := \yy_j - \hat{y}_n \text{,} \quad \XX_c := (\xx_{c1},\dots,\xx_{cn}) \in \R^{r \times n} \text{,} \quad \YY_c := (\yy_{c1},\dots,\yy_{cn}) \in \R^{s \times n}$$
+und schätzen diese dann wie folgt:
+$$ \widehat{\Ssigma}_{\X\X} := \frac{1}{n} \XX_c \XX_c^\top \in \R^{r \times r} \text{,} \quad \widehat{\Ssigma}_{\Y\Y} := \frac{1}{n} \YY_c \YY_c^\top \in \R^{s \times s} \text{,}$$
+\[\widehat{\Ssigma}_{\Y\X} := \frac{1}{n} \YY_c \XX_c^\top = \widehat{\Ssigma}_{\X\Y}^\top \in \R^{s \times r} \text{.}\label{eq:3.6} \tag{3.6}\]
+Die entsprechenden Größen aus Satz~\ref{thm:rrr} können wir nun einfach schätzen, indem wir die Schätzungen für die Erwartungswerte und Kovarianzmatrizen aus \eqref{eq:3.5}, \eqref{eq:3.6} verwenden:
+$$\widehat{\C}^{(t)}_{\min} := \Ggamma^{-1/2} \biggl( \sum_{i=1}^{t} \widehat{\uu}_i \widehat{\uu}_i^\top \biggr) \Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \text{,}$$
+wobei $\widehat{\uu}_i\text{,} \; 1 \leq i \leq t$ orthonormale Eigenvektoren zu den je $i$-größten Eigenwerten $\lambda_i \text{,} \; 1 \leq i \leq t$ von
+$\Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \widehat{\Ssigma}_{\X\Y} \Ggamma^{1/2}$ seien. $\T_{\min}$ aus Satz~\ref{thm:mr} wird analog durch
+$$\widehat{\T} := \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1}$$
+geschätzt.
+
+Es kann nun natürlich auch passieren, dass $\widehat{\Ssigma}_{\X\X}$ nicht invertierbar ist oder $\kappa(\widehat{\Ssigma}_{\X\X})$ zumindest so groß ist, dass Invertieren schwierig wird. In diesem Fall kann man etwa stattdessen die Pseudoinverse von $\widehat{\Ssigma}_{\X\X}$ verwenden oder, wie \cite[Seite 182]{Iz08} nahelegt, durch eine kleine Veränderung der Diagonaleinträge erreichen, dass man eine (besser) invertierbare Matrix erhält:
+$$\widehat{\Ssigma}_{\X\X}^{\delta} := \frac{1}{n}(\XX_c \XX_{c}^\top + \delta \mathbf{I}_r)$$
+für ein $\delta > 0$. In \cite[Kapitel 6.3.4]{Iz08} wird etwa erklärt, wie man $\delta$ in der Praxis sinnvoll wählen könnte.
+
+\subsection*{Effektive Dimension der Regression}
+Letztlich bleibt noch die Frage zu beantworten, wie man die sogenannte \textit{effektive Dimension} $t$ bei der Reduced-Rank-Regression geeignet wählen kann. Dafür beachte man, dass man in der Situation von Satz~\ref{thm:rrr}, wenn der Rang der Koeffizientenmatrix $t = t_0$ zu $t = t_1$, $\; t_0 < t_1$ vergrößert wird, eine Verringerung von $W_{t, \Ggamma}(\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min})$ der Höhe
+$$W_{t_0, \Ggamma}(\muu^{(t_0)}_{\min}, \A^{(t_0)}_{\min}, \B^{(t_0)}_{\min}) - W_{t_1, \Ggamma}(\muu^{(t_1)}_{\min}, \A^{(t_1)}_{\min}, \B^{(t_1)}_{\min}) = \sum_{i=t_0+1}^{t_1} \lambda_i$$
+bewirkt. Hiermit könnte man in der Praxis (wo man dann natürlich mit $\widehat{\lambda}_i$ arbeitet) untersuchen, bis wann es sich \glqq lohnt\grqq , 
+$t$ zu vergrößern, was sich, wie in \cite[Seite 185]{Iz08} beschrieben wird, mit Tests, ob $\rk \, \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2} = \rk \, \Ssigma_{\Y\X}$ kleiner als eine festgelegte Zahl ist, überprüfen ließe. Ferner wird in \cite[Kapitel 6.3.4]{Iz08} ein anderer Algorithmus vorgestellt, mit dem die effektive Dimension $t$ bestimmt werden kann.
+
 
 \newpage
 
