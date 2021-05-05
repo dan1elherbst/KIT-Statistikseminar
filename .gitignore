@@ -4,3 +4,5 @@ Fragen/
 *.log
 *.out
 *.synctex.gz
+
+*.ipynb_checkpoints
