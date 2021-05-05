@@ -264,13 +264,13 @@ Für spezielle Wahlen von $\Ggamma$ und $\X, \Y$ können wir nun wie angekündig
 \subsection*{Stichprobenschätzung bei der Reduced-Rank-Regression}
 
 Um Satz~\ref{thm:rrr} zu verwenden, werden $\muu_\X, \muu_\Y$ und $\Ssigma_{\X\X}. \Ssigma_{\X\Y}, \Ssigma_{\Y\X}, \Ssigma_{\Y\Y}$ benötigt, die in der Regel natürlich unbekannt sind. Stattdessen liegt häufig eine Stichprobe von $n \in \N$ Beobachtungen 
-$$\mathcal{D} := \{(x_j, y_j) \;|\; 1 \leq i \leq n\}$$ 
+$$\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\}$$ 
 vor, die wir als unabhängige Realisierungen von $r$- bzw. $s$-dimensionalen Zufallsvektoren $\X$ bzw. $\Y$ (wie in der \nameref{Einleitung}) auffassen.
 
 Damit schätzen wir $\muu_\X$ und $\muu_\Y$ auf naheliegende Weise:
-\[\widehat{\muu}_{\X} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{x}_j = \bar{x}_n \text{,} \quad \widehat{\muu}_{\Y} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{y}_j = \bar{y}_n \label{eq:3.5} \tag{3.5}\]
+\[\widehat{\muu}_{\X} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{x}_j = \bar{\xx}_n \text{,} \quad \widehat{\muu}_{\Y} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{y}_j = \bar{\yy}_n \label{eq:3.5} \tag{3.5}\]
 Für die Kovarianzmatrizen definieren wir zunächst
-$$\xx_{cj} := \xx_j - \hat{x}_n \text{,} \quad \yy_{cj} := \yy_j - \hat{y}_n \text{,} \quad \XX_c := (\xx_{c1},\dots,\xx_{cn}) \in \R^{r \times n} \text{,} \quad \YY_c := (\yy_{c1},\dots,\yy_{cn}) \in \R^{s \times n}$$
+$$\xx_{cj} := \xx_j - \bar{\xx}_n \text{,} \quad \yy_{cj} := \yy_j - \bar{\yy}_n \text{,} \quad \XX_c := (\xx_{c1},\dots,\xx_{cn}) \in \R^{r \times n} \text{,} \quad \YY_c := (\yy_{c1},\dots,\yy_{cn}) \in \R^{s \times n}$$
 und schätzen diese dann wie folgt:
 $$ \widehat{\Ssigma}_{\X\X} := \frac{1}{n} \XX_c \XX_c^\top \in \R^{r \times r} \text{,} \quad \widehat{\Ssigma}_{\Y\Y} := \frac{1}{n} \YY_c \YY_c^\top \in \R^{s \times s} \text{,}$$
 \[\widehat{\Ssigma}_{\Y\X} := \frac{1}{n} \YY_c \XX_c^\top = \widehat{\Ssigma}_{\X\Y}^\top \in \R^{s \times r} \text{.}\label{eq:3.6} \tag{3.6}\]
