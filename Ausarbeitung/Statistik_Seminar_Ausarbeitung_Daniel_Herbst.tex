@@ -42,6 +42,7 @@
 \newmdtheoremenv[backgroundcolor=black!5, innertopmargin=-2pt]{theorem}[definition]{Satz}
 \newmdtheoremenv[backgroundcolor=black!5, innertopmargin=-2pt]{lemma}[definition]{Lemma}
 \newtheorem*{remark}{Bemerkung}
+\newtheorem*{remarks}{Bemerkungen}
 \DeclareMathOperator*{\argmin}{argmin}
 
 %opening
@@ -55,7 +56,7 @@
 
 \begin{abstract}
 Nachdem in der vorigen Präsentation das multivariate Regressionsmodell mit festen Inputvariablen vorgestellt wurde, möchten wir uns nun dem Fall zufälliger Inputvariablen zuwenden. Zudem werden wir eine Verallgemeinerung des multivariaten Regressionsmodells, das
-\textit{Reduced-Rank-Regressionsmodell (RRR)}, betrachten, bei dem wir zusätzlich den Rang der Regressionskoeffizientenmatrix einschänken. Dieses Verfahren verallgemeinert unter anderem auch einige Techniken der multivariaten Statistik, etwa zur Dimensionsreduktion. Im Wesentlichen folgt der Vortrag 
+\textit{Reduced-Rank-Regressionsmodell (RRR)}, betrachten, bei dem wir zusätzlich den Rang der Regressionskoeffizientenmatrix einschänken. Dieses Verfahren verallgemeinert unter anderem auch einige Techniken der multivariaten Statistik, etwa die Hauptkomponentenanalyse zur Dimensionsreduktion. Im Wesentlichen folgt der Vortrag 
 \cite[Kapitel 6.3]{Iz08}.
 \end{abstract}
 
@@ -64,7 +65,7 @@ Nachdem in der vorigen Präsentation das multivariate Regressionsmodell mit fest
 Unsere Ausgangssituation ist die Folgende:
 $$\X := (X_1, \dots, X_r)^\top \quad \text{und} \quad \Y := (Y_1, \dots, Y_s)^\top \text{,}$$
 seien Zufallsvektoren mit gemeinsamer Verteilung $\Pb^{(\X, \Y)}$, wobei $r, s \in \N$ mit $s \leq r$,
-und ferner definieren wir folgende Schreibweisen für die entsprechenden Erwartungwerte und Kovarianzmatrizen:
+und ferner definieren wir folgende Schreibweisen für die entsprechenden Erwartungwerte und Kovarianzmatrizen (deren Existenz wir voraussetzen):
 $$ \muu_\X := \E\X, \quad \muu_\Y := \E\Y \quad \text{und} \quad \begin{pmatrix}
 	\Ssigma_{\X\X} & \Ssigma_{\X\Y} \\
 	\Ssigma_{\Y\X} & \Ssigma_{\Y\Y}
@@ -83,26 +84,43 @@ wobei $\muu \in \R^s$ und $\T \in \R^{s \times r}$ unbekannte Parameter seien so
 $\mathcal{E}$ als unabhängig vorausgesetzt.
 \\
 
-Ausgehend von der Situation aus der Einleitung wollen wir nun optimale $\muu$ und $\T$ finden in dem Sinne, dass
-$$W(\muu, \T) := \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \in \R^{s \times s}$$ in der Spektralnorm
-$$ \| \mathbf{A} \|_2 := \max_{\| \vv \|_2 = 1} \| \mathbf{A} \vv \|_2 \text{,} \quad \mathbf{A} \in \R^{s \times s} $$ 
-minimiert wird.
+Wir möchten nun optimale $\muu$ und $\T$ finden in dem Sinne, dass die symmetrische, positiv semidefinite Matrix
+$$W(\muu, \T) := \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \in \R^{s \times s}$$ in gewisser Weise minimiert wird. Hierfür verwenden wir folgende Halbordnung, die man auf dem Raum der symmetrischen $s \times s$-Matrizen definieren kann:
 
-Für symmetrische, positiv semidefinite Matrizen $\mathbf{A}$ lässt sich (etwa mit dem Spektralsatz) zeigen, dass
-$$ \| \mathbf{A} \|_2 = \max_{\| \vv \|_2 = 1} \vv^\top \mathbf{A} \vv = \lambda_{\max} (\mathbf{A}) \text{,} $$
-wobei $\lambda_{\max} (\mathbf{A})$ der größte Eigenvektor von $\mathbf{A}$ sei. Da $W(\muu, \T)$ für alle möglichen $\muu$, $\T$ symmetrisch
-positiv semidefinit ist, werden wir diese Darstellung der Spektralnorm auch zur Minimierung von $\| W(\muu, \T) \|_2$  benutzen.
-
+\begin{definition}[Löwner-Halbordnung]
+	Sei $V:= \{\A \in \R^{s \times s} \;|\; \A^\top = \A \}$ der Raum der symmetrischen $s \times s$-Matrizen. Setze für $\A, \B \in V$:
+	$$\A \leq_L \B \; :\Leftrightarrow \; \B - \A \text{ positiv semidefinit.}$$
+	Es lässt sich leicht nachprüfen, dass diese Relation eine Halbordnung auf $V$, die sogenannte Löwner-Halbordnung, definiert.
+\end{definition}
+Mit dieser Halbordnung können wir nun den folgenden Satz formulieren:
 \begin{theorem}
 	\label{thm:mr}
-	Seien $\X$ und $\Y$ wie in der \nameref{Einleitung} und zudem $\Ssigma_{\X\X}$ nichtsingulär, so ist
-	$$ \argmin_{(\muu, \T)} \| W(\muu, \T) \|_2 = (\muu_\Y - \T \muu_\X, \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) =: (\muu_{\min}, \T_{\min}) $$
-	mit 
+	Seien $\X$ und $\Y$ wie in der \nameref{Einleitung}, so ist
+	$$ \argmin_{(\muu, \T)} W(\muu, \T) = (\muu_\Y - \T \muu_\X, \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) =: (\muu_{\min}, \T_{\min}) \text{,} $$
+	wobei bezüglich $\leq_L$ minimiert wird. 
 	$$W(\muu_{\min}, \T_{\min}) = \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \text{.}$$
 	Ferner gilt für $\mathcal{E} := \Y - \muu_{\min} - \T_{\min} \X$, dass 
 	$$\E \mathcal{E} = 0 \quad \text{und} \quad \E[\mathcal{E}(\X - \muu_\X)^\top] = 0 \text{,}$$
 	d.h. $\X$ und $\mathcal{E}$ sind unkorreliert.
 \end{theorem} 
+
+\begin{remarks}
+	\hfill
+	\normalfont
+	\begin{itemize}
+		\item Dass $(\muu_{\min}, \T_{\min})$ $W(\muu, \T)$ minimiert, soll hier natürlich \textbf{nicht} wie etwa in der Mengenlehre bedeuten, dass $W(\muu_{\min}, \T_{\min})$ ein minimales Element der Menge $\mathcal{S} := \{W(\muu, \T) \;|\; \muu \in \R^s, \T \in \R^{s \times r}\}$, sondern die stärkere Bedingung, dass 
+		$$W(\muu_{\min}, \T_{\min}) \leq_L W(\muu, \T) \quad \forall \muu \in \R^s, \T \in \R^{s \times r} \text{.}$$
+		Insbesondere kann es nur eine Minimalstelle geben.
+		\item Die Stetigkeit von $\X$ und $\Y$ sichert, dass $\Ssigma_{\X\X}$ (und $\Ssigma_{\Y\Y}$) invertierbar sind: Denn wäre $\Ssigma_{\X\X}$ singulär, so gäbe es ein $\vv \in \R^s \setminus \{0\}$ mit $$\vv^\top \Ssigma_{\X\X} \vv = \E [\| \vv^\top (\X - \muu_{\X}) \|_2] = 0 \text{,}$$
+		d.h. $$\Pb(\vv^\top (\X - \muu_{\X}) = 0) = 1$$
+		und die Verteilung von $\X$ ist auf einer Hyperebene konzentriert (analog für $\Y$). 
+		\item Mit dem Satz von Courant-Fischer \cite[Seite 52 f.]{Iz08} lässt sich zeigen, dass, falls $\lambda_j(\A)$ der $j$-größte Eigenwert von $\A \in \R^{s\times s}$ ist, dann
+		$$\A \leq_L \B \; \implies \; \lambda_j(\A) \leq \lambda_j(\B), j=1,\dots,s \text{.}$$
+		Damit minimiert $(\muu_{\min}, \T_{\min})$ auch 
+		\[\tr(W(\muu, \T)) = \E[(\Y - \muu - \T \X)^{\top} (\Y - \muu - \T \X)] \text{,} \label{eq:2.2} \tag{2.2}\]
+		was auch häufig als Minimierungsbedingung bei der multivariaten Regression genutzt wird. Die hier vorgestellte Variante ist also allgemeiner.
+	\end{itemize}
+\end{remarks}
 
 \begin{proof}
 	Mit $\X_c := \X - \muu_\X$, $\Y_c := \Y - \muu_\Y$ gilt für alle $\T \in \R^{s \times r}$, $\muu \in \R^s$:
@@ -116,19 +134,10 @@ positiv semidefinit ist, werden wir diese Darstellung der Spektralnorm auch zur 
 		={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \T^\top - \T \Ssigma_{\X\Y} + \T \Ssigma_{\X\X} \T^\top \\
 		& \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \\
 		={}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \\
-		& \quad + (\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})(\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})^\top \\
-		& \quad + (\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top \text{,}
+		& \quad + \underbrace{(\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})(\Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2})^\top}_{=: A(\T) \quad \text{ positiv semidefinit}} \\
+		& \quad + \underbrace{(\muu_\Y - \T \muu_\X - \muu)(\muu_\Y - \T \muu_\X - \muu)^\top}_{=:B(\muu, \T) \quad \text{positiv semidefinit}} \\
+		\geq{}& \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \text{,}
 	\end{align*}
-	und mit $$A(\T) := \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1/2} - \T \Ssigma_{\X\X}^{1/2} \quad \text{,} \quad B(\muu, \T) := \muu_\Y - \T \muu_\X - \muu$$ gilt für $\vv \in \R^s$, $\| \vv \|_2 = 1$:
-	\begin{align*}
-		\vv^\top W(\muu, \T) \vv ={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
-		+ \vv^\top A(\T)^\top A(\T) \vv + \vv^\top B(\muu, \T)^\top B(\muu, \T) \vv \\
-		={}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
-		+ \| A(\T) \vv \|_2 + \| B(\muu, \T) \vv \|_2 \\
-		\geq{}& \vv^\top (\Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y}) \vv
-	\end{align*}
-	und daher ist
-	$$ \| W(\muu, \T) \|_2 \geq \| \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \|_2 \text{,}$$
 	mit Gleichheit falls $A(\T) = B(\muu, \T) = 0$, was der Fall ist, wenn
 	$$ \muu = \muu_\Y - \T \muu_\X =: \muu_{\min} \quad \text{und} \quad \T = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} =: \T_{\min} \text{.}$$
 	Man erhält nun
@@ -160,7 +169,9 @@ wobei $\muu$, $\A$ und $\B$ nun die unbekannten Parameter sind.
 Auch hier möchten wir für $\X$ und $\Y$ wie in Satz~\ref{thm:mr} $\muu \in \R^s$, $\A \in \R^{s \times t}$ und $\B \in \R^{t \times r}$ finden, die $\Y - \muu - \A \B \X$ auf eine gewisse Art und Weise minimieren, gehen nun aber etwas anders vor:
 Für eine symmetrische, positiv definite Gewichtsmatrix $\Ggamma \in \R^{s \times s}$ wollen wir nun 
 $$ W_{t, \Ggamma}(\muu, \A, \B) := \E[(\Y - \muu - \A \B \X)^{\top} \Ggamma (\Y - \muu - \A \B \X)]$$
-über $\muu$, $\A$ und $\B$ minimieren.
+über $\muu$, $\A$ und $\B$ minimieren. 
+
+Man beachte, dass es sich hierbei um eine Verallgemeinerung des Kriteriums \eqref{eq:2.2} handelt, bei der noch die Gewichtsmatrix hinzugefügt wurde. Durch Variation dieser lassen sich mit der Reduced-Rank-Regression einige Techniken der multivariaten Statistik verallgemeinern, wie wir später sehen werden.
 
 \begin{theorem}
 	\label{thm:rrr}
@@ -181,7 +192,7 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 \begin{lemma}[Satz von Eckart-Young]
 	\label{thm:eckart-young}
 	Seien $\A, \B \in \R^{m \times n}$ und $b := \rk \, \B \leq \rk \, \A =: r$, und sei
-	$\lambda_j(\C)$ für eine reelle symmetrischen Matrix $\C$ deren $j$-größter Eigenwert.
+	$\lambda_j(\C)$ für eine reelle symmetrische Matrix $\C$ deren $j$-größter Eigenwert.
 	Dann gilt:
 	$$\lambda_j((\A - \B)(\A - \B)^\top) \geq \lambda_{j+b}(\A \A^\top)$$
 	mit Gleichheit für
@@ -195,6 +206,7 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 \end{proof}
 
 \begin{remark}
+	\normalfont
 	Insbesondere zeigt Lemma~\ref{thm:eckart-young}, dass das dort definierte $\A_b$ den Abstand von $\A$ unter allen Rang-$b$-Matrizen in $\R^{m \times n}$ in der Spektralnorm minimiert.
 \end{remark}
 
@@ -252,7 +264,8 @@ Für den Beweis benötigen wir zunächst einen Hilfssatz aus der Linearen Algebr
 \end{proof}
 
 \begin{remark} 
-		Für $t = s$ ist $\sum_{i=1}^{s} \uu_i \uu_i^\top = \mathbf{I}_s \in \R^{s \times s}$, also $\C^{(t)}_{\min} = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} = \T$ und damit sind in diesem Fall die Vorgehensweisen aus Satz~\ref{thm:mr} und Satz~\ref{thm:rrr} äquivalent.
+	\normalfont
+		Für $t = s$ ist $\sum_{i=1}^{s} \uu_i \uu_i^\top = \mathbf{I}_s \in \R^{s \times s}$, also $\C^{(t)}_{\min} = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} = \T$ und damit liefern in diesem Fall die Vorgehensweisen aus Satz~\ref{thm:mr} und Satz~\ref{thm:rrr} dasselbe Ergebnis - unabhängig von $\Ggamma$.
 \end{remark}
 
 \subsection*{Spezialfälle}
@@ -284,57 +297,57 @@ $\Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \widehat{\
 $$\widehat{\T} := \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1}$$
 geschätzt.
 
-Es kann nun natürlich auch passieren, dass $\widehat{\Ssigma}_{\X\X}$ nicht invertierbar ist oder $\kappa(\widehat{\Ssigma}_{\X\X})$ zumindest so groß ist, dass Invertieren schwierig wird. In diesem Fall kann man etwa stattdessen die Pseudoinverse von $\widehat{\Ssigma}_{\X\X}$ verwenden oder, wie \cite[Seite 182]{Iz08} nahelegt, durch eine kleine Veränderung der Diagonaleinträge erreichen, dass man eine (besser) invertierbare Matrix erhält:
-$$\widehat{\Ssigma}_{\X\X}^{\delta} := \frac{1}{n}(\XX_c \XX_{c}^\top + \delta \mathbf{I}_r)$$
-für ein $\delta > 0$. In \cite[Kapitel 6.3.4]{Iz08} wird etwa erklärt, wie man $\delta$ in der Praxis sinnvoll wählen könnte.
+$\widehat{\Ssigma}_{\X\X}$ und $\widehat{\Ssigma}_{\Y\Y}$ sind nach \cite{EP73} für $n \geq r+1$ mit Wahrscheinlichkeit $1$ invertierbar (hier wird natürlich auch benötigt, dass $\X$ und $\Y$ stetig sind), allerdings kann $\kappa(\widehat{\Ssigma}_{\X\X})$ bzw. $\kappa(\widehat{\Ssigma}_{\Y\Y})$ in der Praxis oft so groß werden, dass Invertieren schwierig ist. In diesem Fall könnte man stattdessen die Pseudoinversen von $\widehat{\Ssigma}_{\X\X},\; \widehat{\Ssigma}_{\Y\Y}$ verwenden oder, wie \cite[Seite 182]{Iz08} nahelegt, durch eine kleine Veränderung der Diagonaleinträge erreichen, dass man eine besser invertierbare Matrix erhält:
+$$\widehat{\Ssigma}_{\X\X}^{\delta} := \frac{1}{n}(\XX_c \XX_{c}^\top + \delta \mathbf{I}_r) \text{,}\quad \widehat{\Ssigma}_{\Y\Y}^{\delta} := \frac{1}{n}(\YY_c \YY_{c}^\top + \delta \mathbf{I}_s)$$
+für ein $\delta > 0$. In \cite[Kapitel 6.3.4]{Iz08} wird etwa erklärt, wie man dieses $\delta$ in der Praxis sinnvoll wählen könnte.
 
 
 \subsection*{Ein Simulationsbeispiel}
 Wir wenden die Reduced-Rank-Regression nun an einem simulierten Beispiel an. Dafür erzeugen wir je $n=1000$ unabhängige Realisierungen 
 $$\xx_j\text{,} \quad \bm{\varepsilon}_j \text{,}\quad 1 \leq j \leq n \text{,}$$
-wobei die $\xx_j$ einer $\mathcal{N}_3(\mathbf{0}, \frac{1}{2} \cdot \mathbf{I}_3)$-Verteilung und die $\bm{\varepsilon}_j$ einer $\mathcal{N}_3(\mathbf{0}, \frac{1}{10} \cdot \mathbf{I}_3)$-Verteilung entstammen und setzen $r=s:=3$ sowie
+wobei die $\xx_j$ einer $\mathcal{N}_3(\mathbf{0}, \frac{1}{2} \cdot \mathbf{I}_3)$-Verteilung und die $\bm{\varepsilon}_j$ einer $\mathcal{N}_3(\mathbf{0}, \frac{1}{10} \cdot \mathbf{I}_3)$-Verteilung entstammen, und setzen $r=s:=3$ sowie
 $$\C := \frac{1}{4} * \begin{pmatrix}
-1 & 1 & 1 \\
-0 & 1 & 1 \\
+1 & 0 & 1 \\
+0 & 1 & 0 \\
 0 & 0 & -1
 \end{pmatrix} \in \R^{s \times r} \text{.}$$
 Für $\yy_j := \C \xx_j + \bm{\varepsilon}_j$ ist unsere Stichprobe für die Reduced-Rank-Regression dann wie in \eqref{eq:3.5}
 \[\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\}\text{.}\]
-und wir können, wie im vorigen Abschnitt beschrieben, die Reduced-Rank-Regression durchführen, wobei wir der Einfachheit halber $\Ggamma := \mathbf{I}_s$ verwenden. 
+und wir können, wie im vorigen Abschnitt beschrieben, die Reduced-Rank-Regression durchführen, wobei wir der Einfachheit halber $\Ggamma := \mathbf{I}_s$ verwenden.
 
 In Abbildung~\ref{fig:images}, (a)-(c) sieht man Visualisierungen dieser Situation: Die bunten Punkte sind die $\yy_j$, die schwarzen Punkte sind die Prädiktoren der Reduced-Rank-Regression für die jeweiligen Parameter $t = 1,2,3$. Im Vergleich dazu sieht man in Abbildung~\ref{fig:images}, (d)-(f) das analoge Ergebnis, wenn man stattdessen $\mathcal{D} := \{(\yy_j, \yy_j) \;|\; 1 \leq i \leq n\}$ als Stichprobe verwendet - d.h. hier wird im Wesentlichen eine Hauptkomponentenanalyse von $\{\yy_j \;|\; 1 \leq j \leq n\}$ durchgeführt.
 
 \begin{figure}[H]
 	\centering
 	\begin{subfigure}{0.3\textwidth}
-		\includegraphics[width=\linewidth]{resources/RRR_X_Y_synthetic_1.png}
+		\includegraphics[width=\linewidth]{resources/X_Y_1_simulated.png}
 		\caption{$\xx, \yy; \; t=1$}
 		\label{fig:1}
 	\end{subfigure}\hfil
 	\begin{subfigure}{0.3\textwidth}
-		\includegraphics[width=\linewidth]{resources/RRR_X_Y_synthetic_2.png}
+		\includegraphics[width=\linewidth]{resources/X_Y_2_simulated.png}
 		\caption{$\xx, \yy; \; t=2$}
 		\label{fig:2}
 	\end{subfigure}\hfil
 	\begin{subfigure}{0.3\textwidth}
-		\includegraphics[width=\linewidth]{resources/RRR_X_Y_synthetic_3.png}
+		\includegraphics[width=\linewidth]{resources/X_Y_3_simulated.png}
 		\caption{$\xx, \yy; \; t=3$}
 		\label{fig:3}
 	\end{subfigure}
 	
 	\medskip
 	\begin{subfigure}{0.3\textwidth}
-		\includegraphics[width=\linewidth]{resources/RRR_Y_Y_synthetic_1.png}
+		\includegraphics[width=\linewidth]{resources/Y_Y_1_simulated.png}
 		\caption{$\yy, \yy; \; t=1$}
 		\label{fig:4}
 	\end{subfigure}\hfil
 	\begin{subfigure}{0.3\textwidth}
-		\includegraphics[width=\linewidth]{resources/RRR_Y_Y_synthetic_2.png}
+		\includegraphics[width=\linewidth]{resources/Y_Y_2_simulated.png}
 		\caption{$\yy, \yy; \; t=2$}
 		\label{fig:5}
 	\end{subfigure}\hfil
 	\begin{subfigure}{0.3\textwidth}
-		\includegraphics[width=\linewidth]{resources/RRR_Y_Y_synthetic_3.png}
+		\includegraphics[width=\linewidth]{resources/Y_Y_3_simulated.png}
 		\caption{$\yy, \yy; \; t=3$}
 		\label{fig:6}
 	\end{subfigure}
@@ -362,6 +375,10 @@ $t$ zu vergrößern, was sich, wie in \cite[Seite 185]{Iz08} beschrieben wird, m
 	Bandeira, Afonso S. und Zhivotovskiy, Nikita.
 	\textit{Lecture Notes for Mathematics of Machine Learning}. 2021.
 	\url{https://metaphor.ethz.ch/x/2021/fs/401-2684-00L/sc/Math_of_ML_Lecture_Notes.pdf}
+	\bibitem[EP73]{EP73}
+	Eaton, Morris L. und Perlman, Michael D.
+	\textit{The Non-Singularity of Generalized Sample Covariance Matrices}.
+	The Annals of Statistics, 1973.
 \end{thebibliography}
 
 
