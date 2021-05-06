@@ -12,6 +12,9 @@
 \usepackage{hyperref}
 \usepackage{mdframed}
 \usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{caption, subcaption}
+\usepackage{float}
 
 \newcommand{\Pb}{\mathbb{P}}
 \newcommand{\E}{\mathbb{E}}
@@ -264,17 +267,17 @@ Für spezielle Wahlen von $\Ggamma$ und $\X, \Y$ können wir nun wie angekündig
 \subsection*{Stichprobenschätzung bei der Reduced-Rank-Regression}
 
 Um Satz~\ref{thm:rrr} zu verwenden, werden $\muu_\X, \muu_\Y$ und $\Ssigma_{\X\X}. \Ssigma_{\X\Y}, \Ssigma_{\Y\X}, \Ssigma_{\Y\Y}$ benötigt, die in der Regel natürlich unbekannt sind. Stattdessen liegt häufig eine Stichprobe von $n \in \N$ Beobachtungen 
-$$\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\}$$ 
+\[\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\} \label{eq:3.5} \tag{3.5}\]
 vor, die wir als unabhängige Realisierungen von $r$- bzw. $s$-dimensionalen Zufallsvektoren $\X$ bzw. $\Y$ (wie in der \nameref{Einleitung}) auffassen.
 
 Damit schätzen wir $\muu_\X$ und $\muu_\Y$ auf naheliegende Weise:
-\[\widehat{\muu}_{\X} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{x}_j = \bar{\xx}_n \text{,} \quad \widehat{\muu}_{\Y} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{y}_j = \bar{\yy}_n \label{eq:3.5} \tag{3.5}\]
+\[\widehat{\muu}_{\X} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{x}_j = \bar{\xx}_n \text{,} \quad \widehat{\muu}_{\Y} := \frac{1}{n} \sum_{j=1}^{n} \mathbf{y}_j = \bar{\yy}_n \label{eq:3.6} \tag{3.6}\]
 Für die Kovarianzmatrizen definieren wir zunächst
 $$\xx_{cj} := \xx_j - \bar{\xx}_n \text{,} \quad \yy_{cj} := \yy_j - \bar{\yy}_n \text{,} \quad \XX_c := (\xx_{c1},\dots,\xx_{cn}) \in \R^{r \times n} \text{,} \quad \YY_c := (\yy_{c1},\dots,\yy_{cn}) \in \R^{s \times n}$$
 und schätzen diese dann wie folgt:
 $$ \widehat{\Ssigma}_{\X\X} := \frac{1}{n} \XX_c \XX_c^\top \in \R^{r \times r} \text{,} \quad \widehat{\Ssigma}_{\Y\Y} := \frac{1}{n} \YY_c \YY_c^\top \in \R^{s \times s} \text{,}$$
-\[\widehat{\Ssigma}_{\Y\X} := \frac{1}{n} \YY_c \XX_c^\top = \widehat{\Ssigma}_{\X\Y}^\top \in \R^{s \times r} \text{.}\label{eq:3.6} \tag{3.6}\]
-Die entsprechenden Größen aus Satz~\ref{thm:rrr} können wir nun einfach schätzen, indem wir die Schätzungen für die Erwartungswerte und Kovarianzmatrizen aus \eqref{eq:3.5}, \eqref{eq:3.6} verwenden:
+\[\widehat{\Ssigma}_{\Y\X} := \frac{1}{n} \YY_c \XX_c^\top = \widehat{\Ssigma}_{\X\Y}^\top \in \R^{s \times r} \text{.}\label{eq:3.7} \tag{3.7}\]
+Die entsprechenden Größen aus Satz~\ref{thm:rrr} können wir nun einfach schätzen, indem wir die Schätzungen für die Erwartungswerte und Kovarianzmatrizen aus \eqref{eq:3.6}, \eqref{eq:3.7} verwenden:
 $$\widehat{\C}^{(t)}_{\min} := \Ggamma^{-1/2} \biggl( \sum_{i=1}^{t} \widehat{\uu}_i \widehat{\uu}_i^\top \biggr) \Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \text{,}$$
 wobei $\widehat{\uu}_i\text{,} \; 1 \leq i \leq t$ orthonormale Eigenvektoren zu den je $i$-größten Eigenwerten $\lambda_i \text{,} \; 1 \leq i \leq t$ von
 $\Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \widehat{\Ssigma}_{\X\Y} \Ggamma^{1/2}$ seien. $\T_{\min}$ aus Satz~\ref{thm:mr} wird analog durch
@@ -285,11 +288,67 @@ Es kann nun natürlich auch passieren, dass $\widehat{\Ssigma}_{\X\X}$ nicht inv
 $$\widehat{\Ssigma}_{\X\X}^{\delta} := \frac{1}{n}(\XX_c \XX_{c}^\top + \delta \mathbf{I}_r)$$
 für ein $\delta > 0$. In \cite[Kapitel 6.3.4]{Iz08} wird etwa erklärt, wie man $\delta$ in der Praxis sinnvoll wählen könnte.
 
+
+\subsection*{Ein Simulationsbeispiel}
+Wir wenden die Reduced-Rank-Regression nun an einem simulierten Beispiel an. Dafür erzeugen wir je $n=1000$ unabhängige Realisierungen 
+$$\xx_j\text{,} \quad \bm{\varepsilon}_j \text{,}\quad 1 \leq j \leq n \text{,}$$
+wobei die $\xx_j$ einer $\mathcal{N}_3(\mathbf{0}, \frac{1}{2} \cdot \mathbf{I}_3)$-Verteilung und die $\bm{\varepsilon}_j$ einer $\mathcal{N}_3(\mathbf{0}, \frac{1}{10} \cdot \mathbf{I}_3)$-Verteilung entstammen und setzen $r=s:=3$ sowie
+$$\C := \frac{1}{4} * \begin{pmatrix}
+1 & 1 & 1 \\
+0 & 1 & 1 \\
+0 & 0 & -1
+\end{pmatrix} \in \R^{s \times r} \text{.}$$
+Für $\yy_j := \C \xx_j + \bm{\varepsilon}_j$ ist unsere Stichprobe für die Reduced-Rank-Regression dann wie in \eqref{eq:3.5}
+\[\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\}\text{.}\]
+und wir können, wie im vorigen Abschnitt beschrieben, die Reduced-Rank-Regression durchführen, wobei wir der Einfachheit halber $\Ggamma := \mathbf{I}_s$ verwenden. 
+
+In Abbildung~\ref{fig:images}, (a)-(c) sieht man Visualisierungen dieser Situation: Die bunten Punkte sind die $\yy_j$, die schwarzen Punkte sind die Prädiktoren der Reduced-Rank-Regression für die jeweiligen Parameter $t = 1,2,3$. Im Vergleich dazu sieht man in Abbildung~\ref{fig:images}, (d)-(f) das analoge Ergebnis, wenn man stattdessen $\mathcal{D} := \{(\yy_j, \yy_j) \;|\; 1 \leq i \leq n\}$ als Stichprobe verwendet - d.h. hier wird im Wesentlichen eine Hauptkomponentenanalyse von $\{\yy_j \;|\; 1 \leq j \leq n\}$ durchgeführt.
+
+\begin{figure}[H]
+	\centering
+	\begin{subfigure}{0.3\textwidth}
+		\includegraphics[width=\linewidth]{resources/RRR_X_Y_synthetic_1.png}
+		\caption{$\xx, \yy; \; t=1$}
+		\label{fig:1}
+	\end{subfigure}\hfil
+	\begin{subfigure}{0.3\textwidth}
+		\includegraphics[width=\linewidth]{resources/RRR_X_Y_synthetic_2.png}
+		\caption{$\xx, \yy; \; t=2$}
+		\label{fig:2}
+	\end{subfigure}\hfil
+	\begin{subfigure}{0.3\textwidth}
+		\includegraphics[width=\linewidth]{resources/RRR_X_Y_synthetic_3.png}
+		\caption{$\xx, \yy; \; t=3$}
+		\label{fig:3}
+	\end{subfigure}
+	
+	\medskip
+	\begin{subfigure}{0.3\textwidth}
+		\includegraphics[width=\linewidth]{resources/RRR_Y_Y_synthetic_1.png}
+		\caption{$\yy, \yy; \; t=1$}
+		\label{fig:4}
+	\end{subfigure}\hfil
+	\begin{subfigure}{0.3\textwidth}
+		\includegraphics[width=\linewidth]{resources/RRR_Y_Y_synthetic_2.png}
+		\caption{$\yy, \yy; \; t=2$}
+		\label{fig:5}
+	\end{subfigure}\hfil
+	\begin{subfigure}{0.3\textwidth}
+		\includegraphics[width=\linewidth]{resources/RRR_Y_Y_synthetic_3.png}
+		\caption{$\yy, \yy; \; t=3$}
+		\label{fig:6}
+	\end{subfigure}
+	\caption{Plots der Simulationen}
+	\label{fig:images}
+\end{figure}
+
+
 \subsection*{Effektive Dimension der Regression}
 Letztlich bleibt noch die Frage zu beantworten, wie man die sogenannte \textit{effektive Dimension} $t$ bei der Reduced-Rank-Regression geeignet wählen kann. Dafür beachte man, dass man in der Situation von Satz~\ref{thm:rrr}, wenn der Rang der Koeffizientenmatrix $t = t_0$ zu $t = t_1$, $\; t_0 < t_1$ vergrößert wird, eine Verringerung von $W_{t, \Ggamma}(\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min})$ der Höhe
 $$W_{t_0, \Ggamma}(\muu^{(t_0)}_{\min}, \A^{(t_0)}_{\min}, \B^{(t_0)}_{\min}) - W_{t_1, \Ggamma}(\muu^{(t_1)}_{\min}, \A^{(t_1)}_{\min}, \B^{(t_1)}_{\min}) = \sum_{i=t_0+1}^{t_1} \lambda_i$$
 bewirkt. Hiermit könnte man in der Praxis (wo man dann natürlich mit $\widehat{\lambda}_i$ arbeitet) untersuchen, bis wann es sich \glqq lohnt\grqq , 
 $t$ zu vergrößern, was sich, wie in \cite[Seite 185]{Iz08} beschrieben wird, mit Tests, ob $\rk \, \Ggamma^{1/2} \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \Ggamma^{1/2} = \rk \, \Ssigma_{\Y\X}$ kleiner als eine festgelegte Zahl ist, überprüfen ließe. Ferner wird in \cite[Kapitel 6.3.4]{Iz08} ein anderer Algorithmus vorgestellt, mit dem die effektive Dimension $t$ bestimmt werden kann.
+
 
 
 \newpage
