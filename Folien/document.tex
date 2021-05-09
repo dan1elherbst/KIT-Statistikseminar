@@ -105,6 +105,25 @@
 
 \begin{frame}
 	\begin{alertblock}{}
+		\begin{center}
+			Löwner-Halbordnung: $ \quad \A \leq_L \B \; :\Leftrightarrow \; \B - \A \text{ pos. semidef.}$
+		\end{center}
+	\end{alertblock}
+	\begin{alertblock}{}
+		\begin{center}
+			Wollen: $ \quad W(\muu, \T) := \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \; \rightarrow \; \min$
+		\end{center}
+	\end{alertblock}
+$\;$ \\
+	Falls $\lambda_j(\A)$ der $j$-größte Eigenwert von $\A \in \R^{s\times s}$, dann
+	$$\A \leq_L \B \; \implies \; \lambda_j(\A) \leq \lambda_j(\B),  \quad j=1, \dots,s \text{.}$$
+	Also:
+	\[\tr(W(\muu, \T)) = \E[(\Y - \muu - \T \X)^{\top} (\Y - \muu - \T \X)] \text{,}\]
+	wird ebenso minimiert.
+\end{frame}
+
+\begin{frame}
+	\begin{alertblock}{}
 	\begin{center}
 		$W(\muu, \T) := \E[(\Y - \muu - \T \X)(\Y - \muu - \T \X)^\top] \text{,} \quad \A \leq_L \B \; :\Leftrightarrow \; \B - \A \text{ pos. semidef.}$
 	\end{center}
@@ -112,7 +131,7 @@
 	\begin{dtheorem}
 		\label{thm:mr}
 		In der Situation von vorher ist
-		$$ \argmin_{(\muu, \T)} W(\muu, \T) = (\muu_\Y - \T \muu_\X, \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) =: (\muu_{\min}, \T_{\min}) \text{(bezüglich } \leq_L \text{),} $$
+		$$ \argmin_{(\muu, \T)} W(\muu, \T) = (\muu_\Y - \T_{\min} \muu_\X, \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1}) =: (\muu_{\min}, \T_{\min})  \quad \text{(bezüglich } \leq_L \text{),} $$
 		$$W(\muu_{\min}, \T_{\min}) = \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} \text{.}$$
 		Ferner gilt für $\mathcal{E} := \Y - \muu_{\min} - \T_{\min} \X$, dass 
 		$$\E \mathcal{E} = \mathbf{0} \quad \text{und} \quad \E[\mathcal{E}(\X - \muu_\X)^\top] = \mathbf{0} \text{.}$$
@@ -139,8 +158,8 @@
 			$W(\muu, \T) = \Ssigma_{\Y\Y} - \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} \Ssigma_{\X\Y} + A(\T) + B(\muu, \T)$
 		\end{center}
 	\end{alertblock}
-	$\implies\;$ $W(\muu, \T)$ minimal für $A(\T) = B(\muu, \T) = 0$, was der Fall ist, wenn
-	$$ \muu = \muu_\Y - \T \muu_\X =: \muu_{\min} \quad \text{und} \quad \T = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} =: \T_{\min} \text{.}$$
+	$\implies\;$ $W(\muu, \T)$ minimal für $A(\T) = B(\muu, \T) = \mathbf{0}$, was der Fall ist, wenn
+	$$ \T = \Ssigma_{\Y\X} \Ssigma_{\X\X}^{-1} =: \T_{\min} \quad \text{und} \quad \muu = \muu_\Y - \T_{\min} \muu_\X =: \muu_{\min} \text{.}$$
 	Man erhält nun
 	\begin{align*}
 	\mathcal{E} ={}& \Y - \muu_{\min} - \T_{\min} \X \\
@@ -162,7 +181,7 @@
 		\item $\muu \in \R^s$ und $\C \in \R^{s \times r}$ unbekannte Parameter
 		\item $\mathcal{E}$ nicht beobachtbarer, zufälliger Fehler mit $\E \mathcal{E} = 0$ und Kovarianzmatrix $\Ssigma_{\mathcal{E} \mathcal{E}}$
 		\item $\X$ und $\mathcal{E}$ unkorreliert
-		\item es gibt ein $t \in \{1,\dots,s\}$ mit $ \rk \, \C \leq t \leq s \text{.}$
+		\item es gibt ein $t \in \{0,\dots,s\}$ mit $ \rk \, \C \leq t \leq s \text{.}$
 	\end{itemize}
 	In diesem Fall gibt es Matrizen $\A \in \R^{s \times t}$ und $\B \in \R^{t \times r}$ mit $\C = \A \B$, d.h. das Modell
 	lässt sich auch schreiben als
@@ -190,7 +209,7 @@ Möchten auch hier wieder $\muu \in \R^s$, $\A \in \R^{s \times t}$ und $\B \in 
 \begin{frame}
 \begin{dtheorem}
 	\label{thm:rrr}
-	Seien $\X$ und $\Y$ wie vorher und $1 \leq t \leq s$. Dann ist
+	Seien $\X$ und $\Y$ wie vorher und $0 \leq t \leq s$. Dann ist
 	\begin{center}
 		$\argmin_{(\muu, \A, \B)} W_{t, \Ggamma}(\muu, \A, \B) = (\muu^{(t)}_{\min}, \A^{(t)}_{\min}, \B^{(t)}_{\min}) \quad  \text{mit}$
 	\end{center}
@@ -323,8 +342,8 @@ $\;$ \\
 \end{frame}
 
 \begin{frame}{Stichprobenschätzung bei der Reduced-Rank-Regression}
-	Zur Minimierung benötigt: $\muu_\X, \muu_\Y$ und $\Ssigma_{\X\X}. \Ssigma_{\X\Y}, \Ssigma_{\Y\X}, \Ssigma_{\Y\Y}$  - in der Regel  unbekannt 
-	I.d.R. Stichprobe 
+	Zur Minimierung benötigt: $\muu_\X, \muu_\Y$ und $\Ssigma_{\X\X}, \Ssigma_{\X\Y}, \Ssigma_{\Y\X}, \Ssigma_{\Y\Y}$  - typischerweise unbekannt. 
+	I.d.R. Stichprobe gegeben:
 	\[\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\} \text{,}\]
 	unabhängige Realisierungen von $r$- bzw. $s$-dimensionalen Zufallsvektoren $\X$ bzw. $\Y$.
 	Arbeiten stattdessen einfach mit den entsprechenden empirischen Größen:
@@ -337,8 +356,8 @@ $\;$ \\
 \begin{frame}{Stichprobenschätzung bei der Reduced-Rank-Regression}
 	$$\widehat{\C}^{(t)}_{\min} := \Ggamma^{-1/2} \biggl( \sum_{i=1}^{t} \widehat{\uu}_i \widehat{\uu}_i^\top \biggr) \Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \text{,}$$
 	wobei $\widehat{\uu}_i\text{,} \; 1 \leq i \leq t$ orthonormale Eigenvektoren zu den je $i$-größten Eigenwerten $\lambda_i \text{,} \; 1 \leq i \leq t$ von
-	$\Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \widehat{\Ssigma}_{\X\Y} \Ggamma^{1/2}$ seien. $\T_{\min}$ aus Satz~\ref{thm:mr} wird analog durch
-	$$\widehat{\T} := \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1}$$
+	$\Ggamma^{1/2} \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1} \widehat{\Ssigma}_{\X\Y} \Ggamma^{1/2}$ seien. $\T_{\min}$ wird analog durch
+	$$\widehat{\T}_{\min} := \widehat{\Ssigma}_{\Y\X} \widehat{\Ssigma}_{\X\X}^{-1}$$
 	geschätzt.
 \end{frame}
 
@@ -355,8 +374,17 @@ $\;$ \\
 	0.5
 	\end{pmatrix} \text{,} \quad \yy_j := \muu + \C \xx_j + \bm{\varepsilon}_j$$
 	Stichprobe:
-	\[\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\}\text{.}\]
-	und wir können die Reduced-Rank-Regression durchführen, wobei wir der Einfachheit halber $\Ggamma := \mathbf{I}_s$ verwenden.
+	\[\mathcal{D} := \{(\xx_j, \yy_j) \;|\; 1 \leq i \leq n\}\text{,}\]
+	verwenden $\Ggamma := \mathbf{I}_s$ bei der Reduced-Rank-Regression.
+	$$ \implies \quad \widehat{\muu}_{\min}^{(3)} \approx \begin{pmatrix}
+	0.504 \\
+	 0.490 \\
+	  0.499
+	\end{pmatrix} \text{,} \quad \widehat{\C}_{\min}^{(3)} \approx \begin{pmatrix}
+	0.246 & -0.018 & 0.241 \\
+	-0.018 & 0.212 & 0.007 \\
+	-0.017 & -0.017 & -0.279
+	\end{pmatrix}$$
 \end{frame}
 
 \begin{frame}
