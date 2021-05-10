@@ -1,4 +1,0 @@
-\babel@toc {ngerman}{}
-\beamer@sectionintoc {1}{Einleitung}{3}{0}{1}
-\beamer@sectionintoc {2}{Klassisches multivariates Regressionsmodell mit zuf\IeC {\"a}lliger Inputvariable}{4}{0}{2}
-\beamer@sectionintoc {3}{Reduced-Rank-Regressionsmodell}{10}{0}{3}
