@@ -4,5 +4,8 @@ Fragen/
 *.log
 *.out
 *.synctex.gz
+*.nav
+*.snm
+*.toc
 
 *.ipynb_checkpoints
